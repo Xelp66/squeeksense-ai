@@ -20,3 +20,57 @@
 .v3-tally>div{padding:17px 12px;background:#172b20;border:1px solid #466348;border-radius:12px;text-align:center}
 .v3-tally small{display:block;color:#a5c4a3;font-size:9px;font-weight:800;min-height:30px}.v3-tally strong{display:block;color:#c0f5a0;font:800 31px 'Space Grotesk';margin-top:7px}
 #rp-yesno[hidden],#rp-numeric[hidden]{display:none!important}
+
+
+/* Compact site navigation – one link per product area, details for secondary tools */
+html{scroll-padding-top:88px}
+.top .top-inner{height:72px;gap:18px}
+.top .brand{font-size:21px;flex:0 0 auto;letter-spacing:-.06em}
+.top .brand-badge{width:34px;height:34px;font-size:23px}
+.top .primary-nav{margin:0 0 0 auto;display:flex;align-items:center;gap:5px;flex:0 1 auto;font-size:12px;font-weight:800}
+.top .primary-nav>.nav-link,.top .nav-more>summary{padding:11px 14px;min-height:42px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;color:#afc0b5;white-space:nowrap;transition:background .15s ease,color .15s ease}
+.top .primary-nav>.nav-link:hover,.top .primary-nav>.nav-link:focus-visible,.top .nav-more>summary:hover,.top .nav-more[open]>summary{color:#eaffdb;background:#1d2c25;outline-offset:3px}
+.top .primary-nav>.nav-link-feature{color:#d9fdbb;border:1px solid #405d42;background:#263c2e}
+.top .primary-nav>.nav-link-feature:hover{background:#345337;border-color:#a7df7a}
+.top .nav-more{position:relative}
+.top .nav-more>summary{cursor:pointer;list-style:none;gap:7px}
+.top .nav-more>summary::-webkit-details-marker{display:none}
+.top .nav-more>summary span{color:#88ba7a;font-size:15px}
+.top .nav-dropdown{position:absolute;right:0;top:calc(100% + 10px);min-width:192px;display:flex;flex-direction:column;padding:8px;border:1px solid #365343;border-radius:13px;background:#102019;box-shadow:0 19px 55px #0009;z-index:50;animation:navAppear .16s ease}
+.top .nav-dropdown a{padding:11px 13px;border-radius:8px;font-size:12px;font-weight:700;color:#bed1c5;white-space:nowrap}
+.top .nav-dropdown a:hover,.top .nav-dropdown a:focus-visible{background:#263c2e;color:#d9f8ca}
+@keyframes navAppear{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+.top .header-right{margin-left:8px;gap:10px;flex:0 0 auto}
+.top .nav-network{display:inline-flex;gap:8px;align-items:center;font-size:10px;font-weight:900;letter-spacing:.08em;color:#a7c69d;white-space:nowrap}
+.top .nav-network .dot{width:7px;height:7px}
+.top .nav-source{font-size:12px;color:#c3d6bd;padding:10px 12px;border-radius:10px;border:1px solid #30483b;white-space:nowrap}
+.top .nav-source:hover{border-color:#6d9568;background:#1c3224;color:#f0ffe5}
+.top .menu{display:none;min-width:42px;height:42px;border-radius:11px;border:1px solid #3c5647;background:#1b2d23;color:#d9f9c3;font-size:23px;align-items:center;justify-content:center}
+.top .mobile-nav{display:none}
+@media(max-width:1120px){
+ .top .primary-nav{gap:0}
+ .top .primary-nav>.nav-link,.top .nav-more>summary{padding:10px 10px}
+ .top .nav-network{display:none}
+}
+@media(max-width:1040px){
+ .top .top-inner{height:70px;gap:10px}
+ .top .primary-nav{display:none}
+ .top .menu{display:inline-flex;margin-left:auto}
+ .top .header-right{margin-left:auto}
+ .top .mobile-nav{display:none;width:100%;margin:0;border-top:1px solid #30463b;padding:12px clamp(18px,5vw,34px) 22px;background:#101a16;flex-direction:column;gap:5px;box-shadow:0 12px 22px #0005}
+ .top .mobile-nav.show{display:flex}
+ .top .mobile-nav>a,.top .mobile-more>summary{padding:13px 15px;border-radius:10px;display:block;font-size:13px;font-weight:800;color:#c6d6c9}
+ .top .mobile-nav>a:hover,.top .mobile-more>summary:hover{background:#263c2c;color:#eaffdb}
+ .top .mobile-nav>a:first-child{background:#203b2a;color:#d4ffc3}
+ .top .mobile-more>summary{cursor:pointer}
+ .top .mobile-sub{display:flex;flex-direction:column;padding:4px 0 8px 14px}
+ .top .mobile-sub a{padding:10px 14px;color:#b3c4b6;font-size:12px;border-left:2px solid #375940}
+ .top .mobile-sub a:hover{color:#d5f4cb;background:#1b2c22}
+}
+@media(max-width:560px){
+ .top .top-inner{height:66px}
+ .top .header-right{display:none}
+ .top .menu{margin-left:auto}
+ .top .brand{font-size:20px}
+}
+@media(prefers-reduced-motion:reduce){.top .nav-dropdown{animation:none}.top .nav-link{transition:none}}
