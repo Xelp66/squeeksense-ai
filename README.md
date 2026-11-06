@@ -23,7 +23,7 @@ When **new** labelled windows arrive, the model first records whether its old pr
 
 Users create a unique public handle plus password. The password is salted and hashed with Node's scrypt; private account data and server-locked rounds are stored in a private Vercel Blob store. Sessions are HMAC-signed and expire after 30 days. There is no email, wallet connection or password recovery yet.
 
-Players can enter **any whole number of minutes from 5 through 1440**, not fixed 30/60/120 presets. The question rotates between:
+Players can enter **any whole number of minutes from 1 through 1440**, not fixed 30/60/120 presets. The question rotates between:
 
 1. Whether wheel movement will be observed (yes/no).
 2. Number of device **passage segments** beginning in the chosen window.
