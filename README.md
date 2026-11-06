@@ -1,5 +1,7 @@
 # SqueekSense 🐹 — The hamster, decoded.
 
+squeekchain-project: f3ef600b-84e5-4a1a-94a1-b651488d0577
+
 A community-built, **read-only** Sepolia dashboard for [Squeekchain](https://sepolia.squeekchain.com/). It shows live wheel telemetry, historical 30-minute activity heatmaps, transparent time-of-day probabilities, a historical walk-forward backtest, Squeek block progress, local predictions and optional foreground browser notifications.
 
 ## Run locally
