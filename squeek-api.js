@@ -2,7 +2,8 @@
    No credentials, no third-party proxy, no attempt to bypass upstream access controls. */
 (()=>{'use strict';
  const BASE='https://api.squeekchain.com/v1';
- const entries=new Map(),pending=new Map(),cooldowns=new Map();
+ const entries=new Map(),pending=new Map(),cooldowns=new Map(),failures=new Map();
+ const snapshotKey='squeeksense.last-successful-status.v1';
  const patterns=[/^\/status$/, /^\/core$/, /^\/measurement\/stats\?range=(?:7d|30d)$/, /^\/measurement\/runs\?limit=(?:[1-9]|[1-9]\d|100)$/];
  function allowed(path){return patterns.some(re=>re.test(path))}
  function ttl(path){return path.startsWith('/measurement/stats')?60000:path.startsWith('/measurement/runs')?13000:path==='/status'?7000:10000}
@@ -41,6 +42,10 @@
    if(path.startsWith('/measurement/runs')&&!Array.isArray(data.items))
     throw failure('Run segments payload is missing items','INVALID_RESPONSE',response.status);
    entries.set(path,{data,etag:response.headers.get('ETag'),until:Date.now()+ttl(path),checkedAt:Date.now()});
+   failures.delete(path);
+   if(path==='/status'&&data.schemaVersion===1&&typeof data.generatedAt==='string'){
+     try{localStorage.setItem(snapshotKey,JSON.stringify({storedAt:Date.now(),data}))}catch{}
+   }
    return data;
   }finally{clearTimeout(timer)}
  }
@@ -48,7 +53,13 @@
   if(typeof path!=='string'||!allowed(path))throw failure('API path not on the SqueekSense allowlist','INVALID_QUERY',400);
   const record=entries.get(path);
   if(!opts.force&&record&&record.until>Date.now())return record.data;
-  if(!pending.has(path)){const promise=request(path).finally(()=>pending.delete(path));pending.set(path,promise)}
+  if(!pending.has(path)){
+    const promise=request(path).catch(e=>{
+      failures.set(path,{code:e.code||'UNKNOWN',httpStatus:e.status||null,message:String(e.message||'Request failed'),at:Date.now()});
+      throw e;
+    }).finally(()=>pending.delete(path));
+    pending.set(path,promise);
+  }
   return pending.get(path);
  }
  function state(){return Array.from(entries.entries()).map(([path,e])=>({path,checkedAt:e.checkedAt,cachedUntil:e.until}))}
@@ -60,5 +71,13 @@
   const fresh=m.freshness==='online'&&secondsOld!==null&&secondsOld<=Math.max(120,Number(m.staleAfterSeconds||120));
   return{state:!fresh?'stale':m.coreStatus==='ACTIVE'?'running':m.coreStatus==='IDLE'?'idle':'unknown',fresh,secondsOld};
  }
- window.SqueekAPI={get,state,measurementStatus};
+ function lastSuccessfulStatus(){
+   try{
+     const saved=JSON.parse(localStorage.getItem(snapshotKey)||'null');
+     if(!saved||Date.now()-saved.storedAt>7*86400000||saved.data?.schemaVersion!==1)return null;
+     return saved;
+   }catch{return null}
+ }
+ function diagnostic(){return{failures:[...failures.entries()].map(([path,details])=>({path,...details})),lastSuccessfulStatus:lastSuccessfulStatus()}}
+ window.SqueekAPI={get,state,measurementStatus,diagnostic,lastSuccessfulStatus};
 })();
