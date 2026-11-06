@@ -88,7 +88,7 @@ async function compute(snapshot,data){
  }
  const last=raw[raw.length-1],tail=raw.filter(x=>x.complete).slice(-6);
  const contiguous=tail.length===6&&tail.every((x,i)=>!i||x.at-tail[i-1].at===ONE);
- snapshot.next30Probability=contiguous&&tail.length===6&&Date.now()-(tail[5].at+ONE)<4*3600000?sigmoid(dot(snapshot.weights,features(tail[5].at+ONE,tail))):null;
+ snapshot.next30Probability=contiguous&&tail.length===6&&tail[5].at+ONE===Math.floor(Date.now()/ONE)*ONE?sigmoid(dot(snapshot.weights,features(tail[5].at+ONE,tail))):null;
  snapshot.freshDataThrough=tail.length?new Date(tail[tail.length-1].at).toISOString():null;
  snapshot.updatedAt=new Date().toISOString();
  return snapshot;
