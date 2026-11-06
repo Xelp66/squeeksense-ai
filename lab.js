@@ -115,35 +115,46 @@ async function leaderboard(){
  }catch(e){set('v3-rank-scope','Leaderboard temporarily unavailable: '+e.message)}
 }
 async function learning(){
+ // Browsers are the API's supported public CORS callers; prefer this legal path.
+ if(window.SqueekBrowserLab){
+  const result=await window.SqueekBrowserLab.learn();
+  if(result)return;
+ }
+ // Keep the server learning route for the day upstream allows Vercel to read.
  try{
   const r=await api('/api/learning');
   if(r.status!=='available')throw Error(r.reason||'Insufficient training observations');
   set('lab-training',fmt(r.trainingSamples));set('lab-new',fmt(r.newlyLearned));set('lab-val-accuracy',pct(r.validation.accuracy));
-  set('lab-val-accuracy-copy',pct(r.validation.accuracy));set('lab-samples',fmt(r.validation.samples)+' untouched later validation intervals');
+  set('lab-val-accuracy-copy',pct(r.validation.accuracy));set('lab-samples',fmt(r.validation.samples)+' later validation intervals');
   set('lab-baseline',pct(r.validation.baselineAccuracy));set('lab-next',pct(r.next30Probability));set('v3-ai-signal',pct(r.next30Probability));
   set('lab-brier',fmt(r.validation.brier,3));set('lab-through',date(r.trainedThrough));set('lab-updated',date(r.updatedAt));
-  set('lab-model-source',r.source);set('lab-status',r.source==='saved-snapshot'?'SAVED MODEL SNAPSHOT':'LIVE LEARNING ENGINE READY');
+  set('lab-model-source',r.source);set('lab-status','SHARED LEARNING ENGINE READY');
   const diff=r.validation.accuracy-r.validation.baselineAccuracy;
   set('lab-gain',Number.isFinite(diff)?(diff>=0?'+':'')+(diff*100).toFixed(1)+' percentage points versus baseline':'Baseline comparison unavailable');
   $('#lab-accuracy-bar').style.width=pct(r.validation.accuracy)==='—'?'0%':pct(r.validation.accuracy);
   $('#lab-baseline-bar').style.width=pct(r.validation.baselineAccuracy)==='—'?'0%':pct(r.validation.baselineAccuracy);
   set('lab-explanation',r.message);
-  set('lab-online',r.liveValidation?.n?'Newly observed labelled windows scored before learning: '+r.liveValidation.n+' · '+pct(r.liveValidation.accuracy)+' correct':'Waiting for new verified training windows. Performance cannot be guaranteed.');
- }catch(e){if(window.SqueekBrowserLab)return window.SqueekBrowserLab.learn();set('lab-status','HISTORY TEMPORARILY UNAVAILABLE');set('lab-explanation',e.message+' — no invented predictions or metrics.')}
+  set('lab-online',r.liveValidation?.n?'New unseen windows tested before learning: '+r.liveValidation.n+' · '+pct(r.liveValidation.accuracy)+' correct':'Waiting for new labelled observations.');
+ }catch(e){set('lab-status','LEARNING SOURCE UNAVAILABLE');set('lab-explanation','Both browser and server data paths are currently unavailable. '+e.message)}
 }
 async function health(){
+ // Browser-direct device diagnostics, rather than treating an upstream server challenge as hamster OFFLINE.
+ if(window.SqueekBrowserLab){
+  const usable=await window.SqueekBrowserLab.health();
+  if(usable)return;
+ }
  try{
-  const r=await api('/api/health');if(!r.apiReachable&&window.SqueekBrowserLab)return window.SqueekBrowserLab.health();const m=r.live;
-  const name={running:'🏃 RUNNING',still:'🧍 IDLE / WHEEL STILL',stale:'⚠️ STALE MEASUREMENT','api-error':'⛔ API ERROR','no-measurement':'⛔ NO MEASUREMENT','hardware-alert':'⚠️ DEVICE ISSUE'};
+  const r=await api('/api/health'),m=r.live;
+  const name={running:'🏃 RUNNING',still:'🧍 IDLE / WHEEL STILL',stale:'⚠️ STALE MEASUREMENT',
+   'api-error':'⛔ BACKEND CAN’T REACH UPSTREAM','no-measurement':'⛔ NO DEVICE MEASUREMENT','hardware-alert':'⚠️ DEVICE ISSUE'};
   set('v3-health-status',name[m.state]||'NO SIGNAL');
-  set('v3-health-detail',date(m.lastObservedAt)+' · '+(m.provenance||'unknown'));
+  set('v3-health-detail',m.lastObservedAt?date(m.lastObservedAt):'No confirmed device reading');
   set('v3-health-history',r.history.available?'AVAILABLE · '+r.history.days+' days':'UNAVAILABLE');
   set('v3-health-runs',r.runs.available?'CONNECTED · '+r.runs.count+' segments':'UNAVAILABLE');
-  set('v3-health-time',date(r.checkedAt));set('v3-running',m.state==='running'?fmt(m.rpm,2)+' RPM':m.state==='still'?'STILL (not confirmed sleep)':'UNKNOWN');
-  $('#v3-signal-running').classList.toggle('active',m.state==='running');
-  $('#v3-signal-still').classList.toggle('active',m.state==='still');
-  set('v3-live-source','Sensor provenance: '+(m.provenance||'unknown')+' · '+(m.remark||''));
- }catch(e){if(window.SqueekBrowserLab)return window.SqueekBrowserLab.health();set('v3-health-status','CHECK UNAVAILABLE');set('v3-health-detail',e.message)}
+  set('v3-health-time',date(r.checkedAt));
+  set('v3-running',m.state==='running'?fmt(m.rpm,2)+' RPM':m.state==='still'?'WHEEL STILL':'UNAVAILABLE');
+  set('v3-live-source',r.apiReachable?'Squeekchain API reachable from Vercel.':'Vercel backend cannot currently retrieve upstream telemetry; device status is unknown.');
+ }catch(e){set('v3-health-status','CONNECTION UNKNOWN');set('v3-health-detail',e.message)}
 }
 function annotate(){
  const value=$('#v3-annotation').value;
