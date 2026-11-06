@@ -9,3 +9,6 @@
 .arena-section{display:none !important}
 @media(max-width:1000px){.v3-grid{grid-template-columns:repeat(2,1fr)}.v3-detail-grid,.v3-arena-grid{grid-template-columns:1fr}.v3-observe{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.v3-head{padding:22px 17px 10px}.v3-grid,.v3-observe{padding:12px 17px}.v3-detail-grid,.v3-arena-grid{padding:0 17px 20px}.v3-grid{gap:9px}.v3-card{padding:15px}.v3-form-row{grid-template-columns:1fr}.v3-question-box{padding:14px}.v3-disclaimer,.v3-observation{padding-left:17px;padding-right:17px}}
+
+/* Respect semantic HTML hidden state even where component display is defined. */
+#v3-auth-box[hidden],#v3-profile-box[hidden],#v3-yesno[hidden],#v3-numeric-label[hidden]{display:none!important}
