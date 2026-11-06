@@ -65,6 +65,18 @@ The original dashboard remains in the project for telemetry, historical heatmaps
 
 Reference: https://docs.squeekchain.com/developers/api/
 
+## Live API connectivity (updated November 6, 2026)
+
+Squeekchain's official API documents **public browser CORS reads** for `https://api.squeekchain.com/v1/*`. The application now uses **`squeek-api.js`** as its shared, browser-direct GET client for live status, statistics, run segments, Learning Lab and Replay, with path allowlisting, request deduplication, endpoint-specific TTLs, sensible 429/503 backoff, and explicit unavailable-data errors. It avoids arbitrary query parameters and conditional CORS preflights.
+
+**Telemetry is not a synonym for backend availability:** the live UI uses `measurement.freshness`, `measurement.coreStatus` and API-generated time stamps to distinguish **RUNNING**, **IDLE (wheel still)**, **STALE** and **API UNREACHABLE**, rather than comparing signed device timestamps against possibly inaccurate visitor clocks. Stale data remains unknown, never biological sleep.
+
+**Verified operational limitation:** on November 6, 2026, server-side requests from Vercel to the upstream API received **HTTP 403**, `cf-mitigated: challenge` from Cloudflare, even for `/v1/status`. The `/api/health` server endpoint classifies this as `upstream.state: "server-challenged"`. We do **not** bypass Cloudflare's protections with fake credentials or an untrusted proxy. Independent Arena settlement and a centrally shared training model remain dependent on the Squeekchain API operator allowing a supported server-to-server connection. In the meantime, on-device Learning Lab and Replay rely on the documented public browser API. Ask the Squeekchain team about an authorized server-side access route for `squeeksense.xyz` Vercel functions.
+
+## Simplified navigation
+
+A compact header now links to **Arena**, **Learning Lab**, **Replay** and **Live**; the **Explore** dropdown holds Live Monitor, AI Forecast, Activity Map and Block Radar. The separate mobile menu mirrors these destinations and removes duplicate Arena/Live links.
+
 ## Deployment and limitations
 
 Root `index.html` is static; `lab.js`, `browser-learning.js`, `replay.js` provide the interface. Vercel Node Functions under `api/` use `@vercel/blob` (private storage credentials and `ARENA_SESSION_SECRET` are server environment variables and **must never be committed**).
