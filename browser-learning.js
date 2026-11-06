@@ -6,13 +6,7 @@ const number=x=>typeof x==='number'&&Number.isFinite(x)?x.toLocaleString('en-US'
 const sigmoid=x=>1/(1+Math.exp(-Math.max(-20,Math.min(20,x)))), dot=(w,x)=>x.reduce((s,v,i)=>s+v*w[i],0),clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
 let history=null,model=null,lastLearnFetch=0;
 try{model=JSON.parse(localStorage.getItem(KEY)||'null')}catch{}
-async function request(path){
- const c=new AbortController(),timer=setTimeout(()=>c.abort(),12500);
- try{const r=await fetch(HOST+path,{cache:'no-store',signal:c.signal,headers:{Accept:'application/json'}});
-  if(!r.ok)throw Error('Squeekchain HTTP '+r.status);
-  const d=await r.json();if(!d||d.status==='unavailable')throw Error(d?.reason||'No usable response');return d
- }finally{clearTimeout(timer)}
-}
+async function request(path){return window.SqueekAPI.get(path)}
 function work(b){if(!b||b.coverage!=='complete')return null;const s=String(b.workUnits??'');if(!/^\d+$/.test(s))return null;const n=Number(s);return Number.isSafeInteger(n)?n:null}
 function buckets(api){
  const out=[];
@@ -77,12 +71,12 @@ function show(m,raw){
  set('lab-explanation','On-device adaptive logistic regression; initial 75% of earlier observations train the model, later 25% test it without leakage. Once newer labelled windows arrive, the algorithm scores each prediction before updating its parameters. This fallback runs in your browser because the API currently challenges Vercel server requests.');
 }
 async function learn(){
- if(Date.now()-lastLearnFetch<45000)return;lastLearnFetch=Date.now();
+ if(Date.now()-lastLearnFetch<45000)return Boolean(model);lastLearnFetch=Date.now();
  try{
   const d=await request('/measurement/stats?range=30d');
   history=d;window.SqueekBrowserLab.history=d;
   const raw=buckets(d),items=labels(raw);
-  if(items.length<25){set('lab-status','INSUFFICIENT MEASURED HISTORY');set('lab-explanation','Only '+items.length+' complete, contiguous training examples. No fake model scores.');return}
+  if(items.length<25){set('lab-status','INSUFFICIENT MEASURED HISTORY');set('lab-explanation','Only '+items.length+' complete, contiguous training examples. No fake model scores.');return true}
   if(!model||model.version!=='local-logistic-v2'||!Array.isArray(model.weights)){
    const split=Math.max(12,Math.floor(items.length*.75)),train=items.slice(0,split),test=items.slice(split),w=Array(10).fill(0);
    for(let epoch=0;epoch<16;epoch++)for(const x of train)update(w,x,.06/(1+epoch*.15));
@@ -96,17 +90,17 @@ async function learn(){
    }
    model.updatedAt=Date.now();
   }
-  localStorage.setItem(KEY,JSON.stringify(model));show(model,raw);
+  localStorage.setItem(KEY,JSON.stringify(model));show(model,raw);return true;
  }catch(e){
-  if(model&&Array.isArray(model.weights)){set('lab-status','SAVED DEVICE MODEL · DATA UNAVAILABLE');set('lab-explanation',String(e.message)+' — saved training state preserved; no new observations learned.')}
-  else{set('lab-status','LEARNING DATA UNAVAILABLE');set('lab-explanation','Could not load direct Squeekchain history: '+e.message)}
+  if(model&&Array.isArray(model.weights)){show(model,[]);set('lab-status','SAVED DEVICE MODEL · UPSTREAM NOT REACHABLE');set('lab-explanation',String(e.message)+' — saved training weights and test scores preserved; no new observations learned.');return true}
+  set('lab-status','LEARNING DATA UNAVAILABLE');set('lab-explanation','Cannot access public Squeekchain history from this browser: '+e.message);return false;
  }
 }
 async function health(){
  const [a,b,c]=await Promise.allSettled([request('/status'),request('/measurement/stats?range=7d'),request('/measurement/runs?limit=25')]);
  const st=a.status==='fulfilled'?a.value:null,m=st?.measurement;
- const age=m&&st?.generatedAt?Date.parse(st.generatedAt)-Date.parse(m.receivedAt||m.observedAt):Infinity;
- const fresh=Boolean(m&&m.freshness==='online'&&age<=150000);
+ const assessment=window.SqueekAPI.measurementStatus(st);
+ const fresh=assessment.fresh;
  const state=!st?'API ERROR':!m?'NO DEVICE MEASUREMENT':!fresh?'STALE READING':m.coreStatus==='ACTIVE'?'RUNNING':m.coreStatus==='IDLE'?'WHEEL STILL':m.coreStatus||'UNKNOWN';
  set('v3-health-status','BROWSER API: '+state);
  set('v3-health-detail',m?.observedAt?new Date(m.observedAt).toLocaleString()+' · '+m.provenance:'No live reading');
@@ -116,7 +110,8 @@ async function health(){
  set('v3-running',fresh&&m.coreStatus==='ACTIVE'?(m.rpmMilli/1000).toFixed(2)+' RPM':'No verified movement');
  el('v3-signal-running').classList.toggle('active',state==='RUNNING');
  el('v3-signal-still').classList.toggle('active',state==='WHEEL STILL');
- set('v3-live-source','Browser-direct public API, source: '+(m?.provenance||'unknown')+'. Eating, sleep and falls cannot be determined from wheel telemetry.');
+ set('v3-live-source','Direct Squeekchain API via this browser · '+(m?.provenance||'no device source')+'. Server-side measurement verification requires separate upstream approval. Eating and sleeping cannot be inferred.');
+ return Boolean(st||b.status==='fulfilled'||c.status==='fulfilled');
 }
 window.SqueekBrowserLab={learn,health,history:null,get model(){return model}};
 })();
