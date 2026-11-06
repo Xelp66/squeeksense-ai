@@ -74,3 +74,27 @@ html{scroll-padding-top:88px}
  .top .brand{font-size:20px}
 }
 @media(prefers-reduced-motion:reduce){.top .nav-dropdown{animation:none}.top .nav-link{transition:none}}
+
+
+/* Honest API-connection diagnostics: collapsed during normal operation. */
+#api-diagnostics[hidden]{display:none!important}
+.api-diagnostics{margin:12px 0 27px;border-radius:15px;border:1px solid #725742;background:linear-gradient(135deg,#241e19,#131d1a);overflow:hidden;box-shadow:0 10px 35px #0002}
+.api-diagnostics>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:54px;padding:13px 22px;font-size:13px;font-weight:800;color:#ffdfaf}
+.api-diagnostics>summary::-webkit-details-marker{display:none}
+.api-diagnostics[open]>summary{border-bottom:1px solid #5b4f41}
+.api-diagnostics>summary:hover{background:#302821}
+.api-pill{font-size:10px;font-weight:900;letter-spacing:.1em;padding:7px 12px;border-radius:40px;background:#3c2b21;border:1px solid #795b40;color:#efbb81;white-space:nowrap}
+.api-diag-body{padding:17px 22px 22px}
+.api-diag-summary{font-size:13px;line-height:1.7;color:#b7bfb4;max-width:950px;margin:0 0 18px}
+.api-diag-row{display:grid;grid-template-columns:185px 1fr;gap:16px;align-items:start;padding:13px 0;border-top:1px solid #394039;color:#d0d9cf;font-size:12px;line-height:1.65}
+.api-diag-row>strong{letter-spacing:.1em;font-size:10px;color:#e0bd9c}
+.api-diag-row>span{overflow-wrap:anywhere}
+.api-diag-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:20px 0 10px}
+.api-diag-actions .btn{font-size:11px;background:#2a382f;border-color:#58634d;white-space:normal}
+.api-diag-actions .btn:first-child{background:#b9f370;border-color:#cbeea5;color:#172415;font-weight:900}
+.api-diag-hint{font-size:11px;color:#9cae9e;line-height:1.75;max-width:940px}
+.api-manual{border-top:1px solid #3a433b;margin-top:16px;padding-top:13px}
+.api-manual>summary{font-size:12px;color:#c1d6c1;cursor:pointer;font-weight:750}
+.api-manual textarea{display:block;width:100%;min-height:108px;max-width:100%;background:#0c1612;color:#e0eae0;border:1px solid #485b4c;border-radius:10px;padding:11px 12px;font:12px/1.5 ui-monospace,monospace;margin:11px 0}
+.api-manual textarea:focus-visible{outline:2px solid #b9f370}
+@media(max-width:620px){.api-diag-row{grid-template-columns:1fr;gap:4px}.api-diag-body{padding:14px}.api-diagnostics>summary{padding:13px 14px;align-items:flex-start}.api-pill{font-size:9px;padding:6px 7px}}
