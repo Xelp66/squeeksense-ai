@@ -73,6 +73,14 @@ Squeekchain's official API documents **public browser CORS reads** for `https://
 
 **Verified operational limitation:** on November 6, 2026, server-side requests from Vercel to the upstream API received **HTTP 403**, `cf-mitigated: challenge` from Cloudflare, even for `/v1/status`. The `/api/health` server endpoint classifies this as `upstream.state: "server-challenged"`. We do **not** bypass Cloudflare's protections with fake credentials or an untrusted proxy. Independent Arena settlement and a centrally shared training model remain dependent on the Squeekchain API operator allowing a supported server-to-server connection. In the meantime, on-device Learning Lab and Replay rely on the documented public browser API. Ask the Squeekchain team about an authorized server-side access route for `squeeksense.xyz` Vercel functions.
 
+## In-app API connection diagnostics (November 7)
+
+When `/v1/status` cannot be fetched, the live monitor now displays **NO FEED**, not a false `OFFLINE` hamster classification, and exposes a diagnostic panel underneath the status banner. The panel separately tests **browser-to-Squeekchain** and **Vercel-to-Squeekchain** connectivity, displays any saved *previously successful* status response clearly as an **ARCHIVED, not live** reading, and links to the exact official status JSON.
+
+If the real upstream status JSON opens in another browser tab, users may optionally inspect a copied response on-device. This is a **user-pasted, unverified historical snapshot**; it does not alter live telemetry, score Arena rounds, or teach the model. The diagnostics report can be copied without authentication tokens. The source integration still uses only documented public GET endpoints, and does not circumvent Cloudflare.
+
+**Access-blocking evidence:** from Vercel's Frankfurt region, `GET https://api.squeekchain.com/v1/status` returned `HTTP 403`, `cf-mitigated: challenge`, and an HTML challenge instead of the documented JSON. The project's own `/api/health` correctly reports `upstream.state: server-challenged`. Since browsers can see cross-origin fetch errors when the challenge omits CORS headers, a successful direct URL navigation alone does not prove JavaScript can access the API. The Squeekchain operator must allow the documented public GET traffic for server-side scoring and shared learning to work reliably.
+
 ## Simplified navigation
 
 A compact header now links to **Arena**, **Learning Lab**, **Replay** and **Live**; the **Explore** dropdown holds Live Monitor, AI Forecast, Activity Map and Block Radar. The separate mobile menu mirrors these destinations and removes duplicate Arena/Live links.
