@@ -1,0 +1,12 @@
+{
+  "name": "squeeksense-ai",
+  "version": "2.0.0",
+  "private": true,
+  "description": "SqueekSense Learning Lab and Arena",
+  "dependencies": {
+    "@vercel/blob": "^2.8.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
