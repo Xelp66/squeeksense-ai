@@ -129,11 +129,11 @@ async function learning(){
   $('#lab-baseline-bar').style.width=pct(r.validation.baselineAccuracy)==='—'?'0%':pct(r.validation.baselineAccuracy);
   set('lab-explanation',r.message);
   set('lab-online',r.liveValidation?.n?'Newly observed labelled windows scored before learning: '+r.liveValidation.n+' · '+pct(r.liveValidation.accuracy)+' correct':'Waiting for new verified training windows. Performance cannot be guaranteed.');
- }catch(e){set('lab-status','HISTORY TEMPORARILY UNAVAILABLE');set('lab-explanation',e.message+' — no invented predictions or metrics.')}
+ }catch(e){if(window.SqueekBrowserLab)return window.SqueekBrowserLab.learn();set('lab-status','HISTORY TEMPORARILY UNAVAILABLE');set('lab-explanation',e.message+' — no invented predictions or metrics.')}
 }
 async function health(){
  try{
-  const r=await api('/api/health'),m=r.live;
+  const r=await api('/api/health');if(!r.apiReachable&&window.SqueekBrowserLab)return window.SqueekBrowserLab.health();const m=r.live;
   const name={running:'🏃 RUNNING',still:'🧍 IDLE / WHEEL STILL',stale:'⚠️ STALE MEASUREMENT','api-error':'⛔ API ERROR','no-measurement':'⛔ NO MEASUREMENT','hardware-alert':'⚠️ DEVICE ISSUE'};
   set('v3-health-status',name[m.state]||'NO SIGNAL');
   set('v3-health-detail',date(m.lastObservedAt)+' · '+(m.provenance||'unknown'));
@@ -143,7 +143,7 @@ async function health(){
   $('#v3-signal-running').classList.toggle('active',m.state==='running');
   $('#v3-signal-still').classList.toggle('active',m.state==='still');
   set('v3-live-source','Sensor provenance: '+(m.provenance||'unknown')+' · '+(m.remark||''));
- }catch(e){set('v3-health-status','CHECK UNAVAILABLE');set('v3-health-detail',e.message)}
+ }catch(e){if(window.SqueekBrowserLab)return window.SqueekBrowserLab.health();set('v3-health-status','CHECK UNAVAILABLE');set('v3-health-detail',e.message)}
 }
 function annotate(){
  const value=$('#v3-annotation').value;
