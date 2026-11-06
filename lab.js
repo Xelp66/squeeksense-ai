@@ -39,7 +39,7 @@ function showQuestion(q){
 }
 async function nextQuestion(){
  if(!player||locked){showAuth();return}
- const n=minutes();if(!n){note('Enter any whole number of minutes between 5 and 1440.',true);return}
+ const n=minutes();if(!n){note('Enter any whole number of minutes between 1 and 1440.',true);return}
  const request=++requestId;
  try{
   const r=await api('/api/arena?action=question&minutes='+n);
@@ -156,7 +156,7 @@ function init(){
  $('#v3-signin').addEventListener('click',()=>auth('login'));
  $('#v3-signout').addEventListener('click',()=>{player='';token='';question=null;locked=false;localStorage.removeItem('squeeksense.session.v2');showAuth();set('v3-question-title','Sign in to unlock rotating questions.');note('Signed out.')});
  $('#v3-submit').addEventListener('click',submit);
- $('#v3-minutes').addEventListener('input',()=>{set('v3-length-note',minutes()?'Custom window: '+minutes()+' minutes':'Whole minutes 5–1440 required');showAuth();clearTimeout(init.timer);init.timer=setTimeout(nextQuestion,450)});
+ $('#v3-minutes').addEventListener('input',()=>{set('v3-length-note',minutes()?'Custom window: '+minutes()+' minutes':'Whole minutes 1–1440 required');showAuth();clearTimeout(init.timer);init.timer=setTimeout(nextQuestion,450)});
  $('#v3-observe').addEventListener('click',annotate);
  try{const o=JSON.parse(localStorage.getItem('squeeksense.manual.v1')||'null');if(o&&Date.now()-o.time<3600000){$('#v3-annotation').value=o.value;set('v3-annotation-result','User-reported observation recorded '+date(o.time)+'. Unverified.')}}catch{}
  showAuth();learning();health();leaderboard();
