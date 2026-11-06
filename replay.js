@@ -47,11 +47,11 @@ async function next(){
  try{
   set('rp-result','Loading complete recorded Squeekchain intervals…');
   const all=flatten(await data()),eligible=[];
-  for(let i=12;i+n<=all.length;i++){
-   if(complete(all.slice(i-12,i))&&complete(all.slice(i,i+n)))eligible.push(i)
+  for(let i=Math.max(12,n);i+n<=all.length;i++){
+   if(complete(all.slice(i-Math.max(12,n),i))&&complete(all.slice(i,i+n)))eligible.push(i)
   }
   if(!eligible.length){set('rp-result','There are not enough complete historical measurement windows for this duration. Try fewer slots.');return}
-  const i=eligible[Math.floor(Math.random()*eligible.length)],kind=['activity','count','first','surge'][sequence++%4],future=all.slice(i,i+n),prev=all.slice(i-12,i);
+  const i=eligible[Math.floor(Math.random()*eligible.length)],kind=['activity','count','first','surge'][sequence++%4],future=all.slice(i,i+n),prev=all.slice(i-Math.max(12,n),i);
   const past=all.slice(0,i),historic=past.filter(x=>x.work!==null);
   const rate=(historic.filter(x=>x.work>0).length+1)/(historic.length+2);
   const recent=prev.slice(-n),priorWork=recent.reduce((a,b)=>a+b.work,0),futureWork=future.reduce((a,b)=>a+b.work,0);
