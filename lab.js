@@ -16,7 +16,7 @@ async function api(path,options={}){
   if(!r.ok)throw Error(data.error||'HTTP '+r.status);return data;
  }finally{clearTimeout(timer)}
 }
-function minutes(){const v=Number($('#v3-minutes').value);return Number.isInteger(v)&&v>=5&&v<=1440?v:null}
+function minutes(){const v=Number($('#v3-minutes').value);return Number.isInteger(v)&&v>=1&&v<=1440?v:null}
 function showAuth(){
  $('#v3-auth-box').hidden=Boolean(player);$('#v3-profile-box').hidden=!player;
  set('v3-current-user',player?'@'+player:'—');
