@@ -13,8 +13,9 @@
   const cooldown=cooldowns.get(path)||0;if(cooldown>Date.now())await sleep(Math.min(cooldown-Date.now(),15000));
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
   try{
+   // Keep browser reads as CORS-simple GETs. If-None-Match can trigger OPTIONS preflight,
+   // which the upstream API may not allow on all routes. TTL and shared CDN caching suffice.
    const headers={Accept:'application/json'};
-   if(previous?.etag)headers['If-None-Match']=previous.etag;
    let response;
    try{response=await fetch(BASE+path,{signal:controller.signal,cache:'no-store',headers,credentials:'omit'})}
    catch(e){throw failure(e.name==='AbortError'?'Squeekchain request timed out':'Squeekchain API is unreachable or browser CORS was blocked','NETWORK',null)}
