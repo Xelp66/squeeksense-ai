@@ -18,10 +18,22 @@ function isCorrect(round,outcome){
 async function allRounds(user){const names=await listKeys('rounds/v2/'+user.uid+'/',150);const rs=await Promise.all(names.slice(-80).map(readJSON));return rs.filter(Boolean).sort((a,b)=>b.createdAt-a.createdAt)}
 async function findResult(round){return readJSON('outcomes/v2/'+round.id+'.json')}
 function parseTimes(v){const t=Date.parse(v||'');return Number.isFinite(t)?t:null}
-async function evidenceRuns(){
- const result=await getAPI('/measurement/runs?limit=100');
- if(!Array.isArray(result.items)||!result.coverageStartAt||!result.coverageThroughAt)throw Error('Segment coverage unavailable');
- return{items:result.items,coverageStart:parseTimes(result.coverageStartAt),coverageEnd:parseTimes(result.coverageThroughAt),freshness:result.freshness,provenance:result.provenance};
+async function evidenceRuns(windowStart){
+ const first=await getAPI('/measurement/runs?limit=100');
+ if(!Array.isArray(first.items)||!first.coverageStartAt||!first.coverageThroughAt)throw Error('Segment coverage unavailable');
+ const byId=new Map();for(const item of first.items)byId.set(item.segmentId||JSON.stringify(item),item);
+ let cursor=first.nextCursor,oldest=Math.min(Infinity,...first.items.map(x=>parseTimes(x.startAt)).filter(x=>x!==null)),pages=1;
+ // The cursor may cover further passage segments. Never claim an exact count from a truncated page.
+ while(cursor&&oldest>windowStart&&pages<5){
+  const more=await getAPI('/measurement/runs?limit=100&cursor='+encodeURIComponent(cursor));
+  if(!Array.isArray(more.items))break;
+  for(const item of more.items)byId.set(item.segmentId||JSON.stringify(item),item);
+  oldest=Math.min(oldest,...more.items.map(x=>parseTimes(x.startAt)).filter(x=>x!==null));
+  cursor=more.nextCursor;pages++;
+ }
+ return{items:[...byId.values()],coverageStart:parseTimes(first.coverageStartAt),
+  coverageEnd:parseTimes(first.coverageThroughAt),freshness:first.freshness,provenance:first.provenance,
+  pageCoverageEnough:!cursor||oldest<=windowStart};
 }
 async function settle(round){
  if(Date.now()<round.end+120000)return null; // allow delayed API snapshots
@@ -41,23 +53,23 @@ async function settle(round){
  }
  if(outcome===null&&round.type!=='buckets'){
   try{
-   const evidence=await evidenceRuns();
-   const segments=evidence.items.filter(x=>x&&parseTimes(x.startAt)!==null&&parseTimes(x.endAt)!==null);
+   const evidence=await evidenceRuns(round.start);
+   const segments=evidence.items.filter(x=>x&&x.measurementEligible!==false&&parseTimes(x.startAt)!==null&&parseTimes(x.endAt)!==null);
    const starts=segments.filter(x=>{const t=parseTimes(x.startAt);return t>=round.start&&t<round.end});
-   const sufficient=evidence.coverageStart!==null&&evidence.coverageStart<=round.start&&evidence.coverageEnd!==null&&evidence.coverageEnd>=round.end;
+   const sufficient=evidence.pageCoverageEnough&&evidence.coverageStart!==null&&evidence.coverageStart<=round.start&&evidence.coverageEnd!==null&&evidence.coverageEnd>=round.end;
    if(round.type==='activity'){
     const touched=segments.some(x=>parseTimes(x.startAt)<round.end&&parseTimes(x.endAt)>=round.start);
     if(touched){outcome='yes';source='signed device run-segment evidence'}
-    // Negative requires complete 30m bucket evidence; passage index alone does not certify no activity.
+    else if(sufficient&&evidence.freshness==='fresh'){outcome='no';source='fresh device segment coverage through full interval'}
+    // Without complete coverage, missing passages do not prove quietness.
    }else if(round.type==='segments'&&sufficient){
     outcome=starts.length;source='device run-segment index with full coverage';
    }else if(round.type==='duration'){
     const first=starts.find(x=>parseTimes(x.endAt)<=round.end);
     if(first){outcome=Math.max(0,Math.round((parseTimes(first.endAt)-parseTimes(first.startAt))/1000));source='signed device passage segment timestamps'}
-    else if(sufficient&&starts.length===0){
-      // Without positive evidence or complete zero-work buckets, absence may be a data gap.
-      reason='No complete passage segment recorded; cannot prove a zero-second run';
-    }
+    else if(sufficient&&starts.length===0&&evidence.freshness==='fresh'){
+      outcome=0;source='fresh device segment coverage, no segment started in interval';
+    }else if(starts.length===0)reason='Cannot confirm absence of run segments';
    }
    if(outcome===null&&evidence.freshness==='unavailable')reason='Device segment feed unavailable';
   }catch(e){reason='Run-segment API unavailable or incomplete'}
