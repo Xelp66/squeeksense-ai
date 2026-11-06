@@ -2,7 +2,21 @@
 
 squeekchain-project: f3ef600b-84e5-4a1a-94a1-b651488d0577
 
-A community-built, **read-only** Sepolia dashboard for [Squeekchain](https://sepolia.squeekchain.com/). It shows live wheel telemetry, historical 30-minute activity heatmaps, transparent time-of-day probabilities, a historical walk-forward backtest, Squeek block progress, local predictions and optional foreground browser notifications.
+**SqueekSense Arena is a playable AI-vs-human prediction game powered by [Squeekchain](https://sepolia.squeekchain.com/) Sepolia measurement history**, with an accompanying intelligence dashboard for context. Players predict whether the wheel will show recorded work in an upcoming 30, 60 or 120-minute UTC window, challenge a transparent statistical model, and earn a local correct-round score only after the public API supplies all measurement buckets.
+
+The companion dashboard shows live wheel telemetry, historical 30-minute activity heatmaps, time-of-day probabilities, a historical walk-forward backtest, block progress, and optional browser notifications.
+
+**[Play SqueekSense Arena](https://squeeksense.xyz/#arena)**
+
+## Arena: a game, not just a read-only dashboard
+
+- Pick **RUN** or **QUIET**, then a round length of **30, 60 or 120 minutes**.
+- The human and model predictions are **locked** before the next UTC half-hour boundary.
+- After the round, the game waits for **all recorded 30-minute activity buckets** in the window. Any bucket with work counts as **RUN**; fully observed zero-work windows count as **QUIET**. Missing API data is never scored as a loss; rounds without complete data after 48 hours are marked unverified.
+- Both sides earn one point when correct; a browser-local scoreboard and recent match history track the contest. **There is no shared leaderboard or server persistence**, and no tokens, wallets, bets or rewards are involved.
+- The opponent is a **historical-statistics prediction model**, not a trained machine-learning model. Predictions may be unavailable when the public API lacks enough observations, and the original source may include simulated or replayed data.
+
+This playable experience is independent of Squeekchain and intended for community exploration, not financial use.
 
 ## Run locally
 
@@ -36,7 +50,7 @@ See the [official API reference](https://docs.squeekchain.com/developers/api/). 
 ## Limitations
 
 - Browser notifications only work while the tab is open; they are **not** service-worker push notifications.
-- Community game predictions are local to a browser, require the tab to remain open, and may be **unverified** when the tab is suspended. They are not global leaderboard scores.
+- Arena matches and the score are saved locally in this browser. A closed tab can still be settled from later historical API data, but missing or delayed measurements leave rounds unverified; there is no cross-device or global leaderboard.
 - No shared database, account, wallet tracking, financial advice, staking, or transaction execution.
 - The site uses Google Fonts as an optional enhancement; fallback fonts work offline.
 - No analytics, tracking scripts, cookies, or API keys.
