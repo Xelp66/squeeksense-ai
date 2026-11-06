@@ -28,6 +28,7 @@
 .arena-bottom{display:flex;justify-content:space-between;gap:16px;border-top:1px solid #40455e;padding:13px 25px 20px;align-items:start}.arena-bottom>div{max-width:66%;flex:1}.arena-bottom strong{font-size:12px}.arena-bottom .activity-log{max-height:100px;margin-top:9px}.arena-bottom .switch{max-width:240px;padding-top:6px;line-height:1.6}
 @media(max-width:900px){.arena-top{grid-template-columns:1fr;padding:27px 24px}.arena-illustration{min-height:100px;justify-content:start;margin-left:10px}.arena-character{width:84px;height:84px;font-size:48px}.arena-character.arena-bot{font-size:49px}.arena-grid{grid-template-columns:1fr}.arena-bottom{flex-wrap:wrap}.arena-bottom>div{max-width:100%}}
 @media(max-width:550px){.arena-grid{padding:10px;gap:10px}.arena-card{padding:18px 14px}.arena-top{padding:24px 18px}.arena-intro h2{font-size:38px}.arena-card-header h3{font-size:22px}.arena-matchup{gap:7px;padding:13px 10px}.arena-contender strong{font-size:16px}.arena-tags span{font-size:9px}.arena-pick{font-size:12px;min-height:52px}.arena-bottom{padding:15px}}
+.arena-pick:disabled,.arena-times button:disabled{cursor:not-allowed;opacity:.76}
 </style>
 </head>
 <body>
@@ -89,9 +90,12 @@ function saveArena(){try{localStorage.setItem(arenaStoreKey,JSON.stringify(arena
 function arenaModel(){const model=buildModel(daysList());const p={30:model.p30,60:model.p60,120:model.p120}[arenaMinutes];return p&&p.n>=3&&model.dayCount>=3?p:null}
 function renderArena(){
   const model=arenaModel(),active=arenaState.active;
-  set('arena-human-call',arenaPick==='run'?'RUN 🐹':'QUIET 🌙');
-  set('arena-ai-call',model?(model.p>=.5?'RUN 🐹':'QUIET 🌙'):'NO DATA');
-  set('arena-ai-prob',model?Math.round(model.p*100)+'% run probability · '+model.n+' historical examples':'Insufficient historical data');
+  const yourCall=active?active.human:arenaPick,modelCall=active?active.ai:(model?(model.p>=.5?'run':'quiet'):null);
+  set('arena-human-call',yourCall==='run'?'RUN 🐹':'QUIET 🌙');
+  set('arena-ai-call',modelCall?(modelCall==='run'?'RUN 🐹':'QUIET 🌙'):'NO DATA');
+  set('arena-ai-prob',active?Math.round(active.prob*100)+'% run probability · '+active.samples+' locked examples':model?Math.round(model.p*100)+'% run probability · '+model.n+' historical examples':'Insufficient historical data');
+  $('[data-arena-pick]').forEach(button=>{const chosen=button.dataset.arenaPick===yourCall;button.classList.toggle('selected',chosen);button.setAttribute('aria-pressed',String(chosen));button.disabled=Boolean(active)});
+  $('[data-arena-minutes]').forEach(button=>{const chosen=Number(button.dataset.arenaMinutes)===(active?active.minutes:arenaMinutes);button.classList.toggle('selected',chosen);button.setAttribute('aria-pressed',String(chosen));button.disabled=Boolean(active)});
   const results=arenaState.history.filter(x=>x.verified);
   set('arena-you-score',results.filter(x=>x.human===x.outcome).length);
   set('arena-model-score',results.filter(x=>x.ai===x.outcome).length);
