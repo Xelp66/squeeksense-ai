@@ -26,13 +26,9 @@ async function data(){
  if(loaded)return loaded;
  const shared=window.SqueekBrowserLab?.history;
  if(shared?.activity?.days){loaded=shared;return loaded}
- const c=new AbortController(),t=setTimeout(()=>c.abort(),12000);
- try{
-  const r=await fetch('https://api.squeekchain.com/v1/measurement/stats?range=30d',{cache:'no-store',signal:c.signal});
-  if(!r.ok)throw Error('HTTP '+r.status);
-  const d=await r.json();if(!Array.isArray(d.activity?.days))throw Error('Measurement history unavailable');
-  loaded=d;return d;
- }finally{clearTimeout(t)}
+ const response=await window.SqueekAPI.get('/measurement/stats?range=30d');
+ if(!Array.isArray(response.activity?.days))throw Error('Measurement history unavailable');
+ loaded=response;return loaded;
 }
 function questionLabel(kind,n){
  if(kind==='activity')return'Will ANY recorded wheel movement occur in the next '+(n*30)+' minutes?';
