@@ -12,3 +12,11 @@
 
 /* Respect semantic HTML hidden state even where component display is defined. */
 #v3-auth-box[hidden],#v3-profile-box[hidden],#v3-yesno[hidden],#v3-numeric-label[hidden]{display:none!important}
+
+/* Instant historical replay cards */
+.v3-replay{border-color:#779b48;background:radial-gradient(circle at 92% 0,#324224 0,transparent 42%),#121d19}
+.v3-replay .v3-tag{color:#d2f7a8}.v3-replay .v3-feature{background:#284330;border-color:#507b43}
+.v3-tally{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 0 21px}
+.v3-tally>div{padding:17px 12px;background:#172b20;border:1px solid #466348;border-radius:12px;text-align:center}
+.v3-tally small{display:block;color:#a5c4a3;font-size:9px;font-weight:800;min-height:30px}.v3-tally strong{display:block;color:#c0f5a0;font:800 31px 'Space Grotesk';margin-top:7px}
+#rp-yesno[hidden],#rp-numeric[hidden]{display:none!important}
