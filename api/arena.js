@@ -7,7 +7,7 @@ const QUESTIONS=[
  {type:'duration',label:'How long will the first completed passage segment last?',input:'number',unit:'seconds'},
  {type:'buckets',label:'How many complete 30-minute intervals will show movement?',input:'number',unit:'intervals'}
 ];
-function durationMinutes(v){const n=Number(v);return Number.isInteger(n)&&n>=5&&n<=1440?n:null}
+function durationMinutes(v){const n=Number(v);return Number.isInteger(n)&&n>=1&&n<=1440?n:null}
 function questionFor(index,minutes){const usable=minutes>=30?QUESTIONS:QUESTIONS.slice(0,3);return usable[index%usable.length]}
 function answerOK(q,a){if(q==='activity')return a==='yes'||a==='no';return typeof a==='number'&&Number.isInteger(a)&&a>=0&&a<=100000}
 function isCorrect(round,outcome){
@@ -139,7 +139,7 @@ module.exports=async function handler(req,res){
   if(method==='GET'&&action==='leaderboard')return leader(res);
   if(method==='GET'&&action==='question'){
     const user=bearer(req);if(!user)return error(res,'Sign in to play',401);
-    const minutes=durationMinutes(req.query.minutes);if(!minutes)return error(res,'Choose a whole number of minutes, 5–1440');
+    const minutes=durationMinutes(req.query.minutes);if(!minutes)return error(res,'Choose a whole number of minutes, 1–1440');
     const rounds=await allRounds(user);
     const active=rounds.find(x=>!x.cancelled);
     let live=null;
@@ -151,7 +151,7 @@ module.exports=async function handler(req,res){
   if(method==='POST'&&action==='start'){
     const user=bearer(req);if(!user)return error(res,'Sign in to play',401);
     const minutes=durationMinutes(req.body?.minutes),answer=req.body?.answer;
-    if(!minutes)return error(res,'Enter 5–1440 whole minutes');
+    if(!minutes)return error(res,'Enter 1–1440 whole minutes');
     const rounds=await allRounds(user);
     // Detect outstanding rounds; never grant a second scoreable round to same account
     for(const existing of rounds.slice(0,15)){
