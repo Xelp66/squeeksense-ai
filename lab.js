@@ -120,7 +120,7 @@ async function learning(){
   if(r.status!=='available')throw Error(r.reason||'Insufficient training observations');
   set('lab-training',fmt(r.trainingSamples));set('lab-new',fmt(r.newlyLearned));set('lab-val-accuracy',pct(r.validation.accuracy));
   set('lab-val-accuracy-copy',pct(r.validation.accuracy));set('lab-samples',fmt(r.validation.samples)+' untouched later validation intervals');
-  set('lab-baseline',pct(r.validation.baselineAccuracy));set('lab-next',pct(r.next30Probability));
+  set('lab-baseline',pct(r.validation.baselineAccuracy));set('lab-next',pct(r.next30Probability));set('v3-ai-signal',pct(r.next30Probability));
   set('lab-brier',fmt(r.validation.brier,3));set('lab-through',date(r.trainedThrough));set('lab-updated',date(r.updatedAt));
   set('lab-model-source',r.source);set('lab-status',r.source==='saved-snapshot'?'SAVED MODEL SNAPSHOT':'LIVE LEARNING ENGINE READY');
   const diff=r.validation.accuracy-r.validation.baselineAccuracy;
