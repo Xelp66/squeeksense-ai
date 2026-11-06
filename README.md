@@ -12,7 +12,7 @@ The companion dashboard shows live wheel telemetry, historical 30-minute activit
 
 - Pick **RUN** or **QUIET**, then a round length of **30, 60 or 120 minutes**.
 - The human and model predictions are **locked** before the next UTC half-hour boundary.
-- After the round, the game waits for **all recorded 30-minute activity buckets** in the window. Any bucket with work counts as **RUN**; fully observed zero-work windows count as **QUIET**. Missing API data is never scored as a loss; rounds without complete data after 48 hours are marked unverified.
+- After the round, the game waits for **all recorded 30-minute activity buckets (using Squeekchain's noon-to-noon UTC measurement days)** in the window. Any bucket with work counts as **RUN**; fully observed zero-work windows count as **QUIET**. Missing API data is never scored as a loss; rounds without complete data after 48 hours are marked unverified.
 - Both sides earn one point when correct; a browser-local scoreboard and recent match history track the contest. **There is no shared leaderboard or server persistence**, and no tokens, wallets, bets or rewards are involved.
 - The opponent is a **historical-statistics prediction model**, not a trained machine-learning model. Predictions may be unavailable when the public API lacks enough observations, and the original source may include simulated or replayed data.
 
