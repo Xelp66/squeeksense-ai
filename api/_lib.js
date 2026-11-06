@@ -38,12 +38,27 @@ async function listKeys(prefix,max=400){
  return paths;
 }
 async function getAPI(path){
- const c=new AbortController(),t=setTimeout(()=>c.abort(),10000);
- try{const r=await fetch(API+path,{signal:c.signal,headers:{Accept:'application/json'}});
-   if(!r.ok)throw Error('Squeekchain HTTP '+r.status);
-   const d=await r.json();if(!d||typeof d!=='object'||d.status==='unavailable')throw Error(d?.reason||'data unavailable');
-   return d;
- }finally{clearTimeout(t)}
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+ try{
+   let response;
+   try{response=await fetch(API+path,{signal:controller.signal,headers:{Accept:'application/json'},cache:'no-store'})}
+   catch(e){const err=new Error(e.name==='AbortError'?'Squeekchain API timed out':'Squeekchain API network request failed');err.code=e.name==='AbortError'?'TIMEOUT':'NETWORK';throw err}
+   const contentType=response.headers.get('content-type')||'';
+   if(!response.ok){
+     const challenged=response.headers.get('cf-mitigated')==='challenge'||([403,503].includes(response.status)&&contentType.includes('text/html'));
+     const err=new Error(challenged?'Squeekchain Cloudflare is challenging server-side requests':'Squeekchain upstream HTTP '+response.status);
+     err.code=challenged?'UPSTREAM_CHALLENGE':response.status===429?'RATE_LIMIT':'UPSTREAM_HTTP';
+     err.status=response.status;err.retryAfter=response.headers.get('retry-after');
+     throw err;
+   }
+   if(!contentType.includes('json')){
+     const err=new Error('Squeekchain returned HTML/non-JSON instead of an API response');err.code='INVALID_UPSTREAM_RESPONSE';throw err;
+   }
+   let data;try{data=await response.json()}catch{const err=new Error('Malformed Squeekchain JSON');err.code='INVALID_UPSTREAM_RESPONSE';throw err}
+   if(!data||typeof data!=='object'||Array.isArray(data)){const err=new Error('Unexpected Squeekchain payload');err.code='INVALID_UPSTREAM_RESPONSE';throw err}
+   if(data.status==='unavailable'){const err=new Error('Squeekchain data unavailable: '+String(data.reason||'unknown'));err.code='DATA_UNAVAILABLE';throw err}
+   return data;
+ }finally{clearTimeout(timer)}
 }
 function bucketValue(b){
  if(!b||b.coverage!=='complete')return null;
