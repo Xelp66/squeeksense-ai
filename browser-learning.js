@@ -72,7 +72,7 @@ function show(m,raw){
  const contiguous=last.length===6&&last.every((v,i)=>!i||v.at-last[i-1].at===STEP);
  const nowStart=Math.floor(Date.now()/STEP)*STEP;
  const next=contiguous&&last[5].at+STEP===nowStart?sigmoid(dot(m.weights,features(nowStart,last))):null;
- set('lab-next',pct(next));
+ set('lab-next',pct(next));set('v3-ai-signal',pct(next));
  set('lab-online',m.live?.n?'Post-deployment new windows evaluated BEFORE training: '+m.live.n+' · '+pct(m.live.correct/m.live.n)+' accuracy':'Awaiting new observed intervals for prequential test-then-learn.');
  set('lab-explanation','On-device adaptive logistic regression; initial 75% of earlier observations train the model, later 25% test it without leakage. Once newer labelled windows arrive, the algorithm scores each prediction before updating its parameters. This fallback runs in your browser because the API currently challenges Vercel server requests.');
 }
