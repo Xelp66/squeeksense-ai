@@ -138,23 +138,25 @@ async function learning(){
  }catch(e){set('lab-status','LEARNING SOURCE UNAVAILABLE');set('lab-explanation','Both browser and server data paths are currently unavailable. '+e.message)}
 }
 async function health(){
- // Browser-direct device diagnostics, rather than treating an upstream server challenge as hamster OFFLINE.
- if(window.SqueekBrowserLab){
-  const usable=await window.SqueekBrowserLab.health();
-  if(usable)return;
+ // Device state must come from the SAME public browser API path as the working live monitor.
+ // Vercel's /api/health can be Cloudflare-challenged and must not overwrite a healthy
+ // browser status with a misleading backend connectivity warning.
+ if(!window.SqueekBrowserLab || typeof window.SqueekBrowserLab.health!=='function'){
+   set('v3-health-status','⏳ INITIALIZING BROWSER TELEMETRY');
+   set('v3-health-detail','Waiting for the public Squeekchain browser API client.');
+   set('v3-live-source','Server access is a separate diagnostic, not the wheel state.');
+   return;
  }
  try{
-  const r=await api('/api/health'),m=r.live;
-  const name={running:'🏃 RUNNING',still:'🧍 IDLE / WHEEL STILL',stale:'⚠️ STALE MEASUREMENT',
-   'api-error':'⛔ BACKEND CAN’T REACH UPSTREAM','no-measurement':'⛔ NO DEVICE MEASUREMENT','hardware-alert':'⚠️ DEVICE ISSUE'};
-  set('v3-health-status',name[m.state]||'NO SIGNAL');
-  set('v3-health-detail',m.lastObservedAt?date(m.lastObservedAt):'No confirmed device reading');
-  set('v3-health-history',r.history.available?'AVAILABLE · '+r.history.days+' days':'UNAVAILABLE');
-  set('v3-health-runs',r.runs.available?'CONNECTED · '+r.runs.count+' segments':'UNAVAILABLE');
-  set('v3-health-time',date(r.checkedAt));
-  set('v3-running',m.state==='running'?fmt(m.rpm,2)+' RPM':m.state==='still'?'WHEEL STILL':'UNAVAILABLE');
-  set('v3-live-source',r.apiReachable?'Squeekchain API reachable from Vercel.':'Vercel backend cannot currently retrieve upstream telemetry; device status is unknown.');
- }catch(e){set('v3-health-status','CONNECTION UNKNOWN');set('v3-health-detail',e.message)}
+   await window.SqueekBrowserLab.health();
+ }catch(e){
+   set('v3-health-status','⚠️ BROWSER TELEMETRY UNAVAILABLE');
+   set('v3-health-detail','Public API request failed: '+String(e.message||e).slice(0,200));
+   set('v3-health-history','UNKNOWN');
+   set('v3-health-runs','UNKNOWN');
+   set('v3-running','UNKNOWN');
+   set('v3-live-source','The live wheel state cannot be confirmed in this browser. See the independent connection diagnostic below.');
+ }
 }
 function annotate(){
  const value=$('#v3-annotation').value;
