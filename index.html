@@ -258,7 +258,7 @@ $('#alert-toggle').addEventListener('change',async e=>{if(e.target.checked){if(!
 setInterval(()=>{renderArena();if(status?.measurement?.coreStatus==='IDLE')renderLive()},30000);updateLive();updateStats();setInterval(updateLive,20000);setInterval(updateStats,5*60000);renderArena();
 })();
 </script>
-<script defer src="/lab.js"></script>
 <script defer src="/browser-learning.js"></script>
+<script defer src="/lab.js"></script>
 <script defer src="/replay.js"></script>
 </body></html>
