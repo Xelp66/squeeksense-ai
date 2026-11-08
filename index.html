@@ -11,6 +11,7 @@
 </style>
 
 <link rel="stylesheet" href="/lab.css">
+<link rel="stylesheet" href="/neural-garden.css">
 </head>
 <body>
 <header class="top">
@@ -46,11 +47,14 @@
 <section class="hero"><div><div class="eyebrow">The world's cutest on-chain intelligence</div><h1>The hamster,<br><em>decoded.</em></h1><p class="hero-copy">Meet SqueekSense. A real-time intelligence layer for Squeektoshi's wheel — tracking live activity, learning daily patterns, and forecasting the next run. Powered by real Squeekchain telemetry.</p><div class="hero-actions"><a class="btn btn-primary" href="#learning-lab">EXPLORE THE LEARNING LAB ↗</a><a class="btn" href="#forecast">See prediction model ↓</a></div><p class="disclaimer">Adaptive activity intelligence · Transparent model evaluation · Public Squeekchain data</p></div><div class="hero-art" aria-label="Illustration of a hamster in a running wheel"><div class="orbit"></div><div class="wheel" id="wheel"><div class="wheel-base"></div></div><div class="hamster" id="hamster" role="img" aria-label="Hamster">🐹</div><div class="float-card float-left"><small>WHEEL TELEMETRY</small><strong id="floating-rpm">— RPM</strong></div><div class="float-card float-right"><small>CURRENT STATE</small><strong class="signal" id="floating-state">CONNECTING...</strong></div></div></section>
 
 <section class="v3-shell" id="learning-lab">
- <div class="v3-head"><div><div class="v3-tag">🧠 01 / THE LEARNING LAB • MODEL V2</div><h2 class="v3-title">Watch the model <span>learn.</span></h2><p class="v3-sub">More than a chart: a shared predictive model trains on historical Squeekchain measurements, tests on later unseen data, and scores newly observed windows <b>before</b> learning from them. We report real results, never invented accuracy.</p></div><span class="v3-chip" id="lab-status">CONNECTING TO THE LEARNING ENGINE</span></div>
+ <div class="v3-head"><div><div class="v3-tag">🧠 01 / SQUEEKSENSE LEARNING LAB • EVOLUTION EDITION</div><h2 class="v3-title">Watch intelligence <span>take root.</span></h2><p class="v3-sub">Every complete wheel observation teaches our browser-trained model. Now each new, pre-committed half-hour forecast can shape an interactive garden—while the Feature Brain explains what the model actually uses.</p></div><span class="v3-chip" id="lab-status">CONNECTING TO THE LEARNING ENGINE</span></div>
+ <div class="ng-shell" data-neural-garden data-ng-mode="live" aria-label="Interactive Neural Garden and Feature Brain visualizations"></div>
+ <details class="ng-advanced"><summary><span>◈ Model diagnostics & evaluation details</span><small>TRAINING SAMPLES · ACCURACY · BASELINE · BRIER SCORE</small></summary>
  <div class="v3-grid"><div class="v3-card v3-metric"><small>TRAINING EXAMPLES</small><strong id="lab-training">—</strong><span>Measured windows used in model updates</span></div><div class="v3-card v3-metric"><small>OUT-OF-SAMPLE ACCURACY</small><strong id="lab-val-accuracy">—</strong><span id="lab-samples">Waiting for validation data</span></div><div class="v3-card v3-metric"><small>NEW EXAMPLES LEARNED</small><strong id="lab-new">—</strong><span>Incrementally incorporated after evaluation</span></div><div class="v3-card v3-metric"><small>NEXT 30-MIN FORECAST</small><strong id="lab-next">—</strong><span>Observed wheel movement probability</span></div></div>
  <div class="v3-detail-grid"><div class="v3-card"><h3>Model versus historical baseline</h3><p>This is genuine chronological validation; higher accuracy is not guaranteed. The baseline predicts from earlier hour-of-day frequencies.</p><div class="v3-status-list"><div><span>Learning model · unseen intervals</span><strong id="lab-val-accuracy-copy">See above</strong></div></div><div class="v3-bar"><b id="lab-accuracy-bar"></b></div><div class="v3-status-list"><div><span>Time-of-day baseline</span><strong id="lab-baseline">—</strong></div></div><div class="v3-bar"><b style="background:linear-gradient(90deg,#86639a,#bf9cea)" id="lab-baseline-bar"></b></div><p id="lab-gain">—</p><p>Calibration (Brier, lower is better): <b id="lab-brier">—</b></p><p id="lab-online">Waiting for newly completed windows.</p></div>
  <div class="v3-card"><h3>Transparent adaptive training</h3><div class="v3-status-list"><div><span>Training engine</span><strong>Online logistic regression</strong></div><div><span>Source</span><strong id="lab-model-source">—</strong></div><div><span>Last example date</span><strong id="lab-through">—</strong></div><div><span>Model checked at</span><strong id="lab-updated">—</strong></div></div><p id="lab-explanation">Connecting to real Squeekchain history…</p><p>Inputs: historical wheel work, past movement, daily UTC rhythms and day-of-week. Targets: future wheel activity, never medical or sleep diagnoses.</p></div></div>
  <p class="v3-disclaimer">Scientific transparency: model training ≠ proof of improvement. Live source can report hardware, simulated or replay telemetry; these provenance states are shown separately. Unavailable readings are excluded rather than treated as stillness.</p>
+ </details>
 </section>
 <section class="v3-shell" id="signal-center">
  <div class="v3-head"><div><div class="v3-tag">📡 02 / LIVE SIGNAL CENTER</div><h2 class="v3-title">What does the wheel <span>actually tell us?</span></h2><p class="v3-sub">Separate real telemetry from biological guesses. We can confirm wheel movement or stillness; without a verified camera classifier or additional sensors, sleeping, eating and falling remain unknown.</p></div><span class="v3-chip" id="v3-health-status">CHECKING LIVE API</span></div>
@@ -122,5 +126,6 @@ setInterval(()=>{if(status?.measurement?.coreStatus==='IDLE')renderLive()},30000
 </script>
 <script defer src="/browser-learning.js"></script>
 <script defer src="/lab.js"></script>
+<script defer src="/neural-garden.js"></script>
 
 </body></html>
