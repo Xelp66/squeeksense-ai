@@ -131,6 +131,17 @@ class NG {
    const tick=ev.target.closest('[data-ng-result]');if(tick){this.ledgIdx=Number(tick.dataset.ngResult);this.drawLedger();return}
   });
   this.root.addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target.closest('[data-ng-feature]')){ev.preventDefault();this.selected=Number(ev.target.closest('[data-ng-feature]').dataset.ngFeature);this.drawBrain()}});
+  // Gentle pointer parallax only; the model does not change when visitors move the scene.
+  const garden=this.q('.ng-scene.garden'),reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if(garden&&!reduced){
+   garden.addEventListener('pointermove',ev=>{
+    if(ev.pointerType==='touch')return;
+    const rect=garden.getBoundingClientRect(),x=(ev.clientX-rect.left)/rect.width-.5,y=(ev.clientY-rect.top)/rect.height-.5;
+    const art=garden.querySelector('.ng-art.garden-svg');
+    if(art)art.style.transform='translate3d('+(-x*9).toFixed(1)+'px,'+(-y*6).toFixed(1)+'px,0)';
+   });
+   garden.addEventListener('pointerleave',()=>{const art=garden.querySelector('.ng-art.garden-svg');if(art)art.style.transform='' });
+  }
   window.addEventListener('squeek:learning-ready',()=>{if(this.mode==='live')this.sync()});
   window.addEventListener('storage',e=>{if(e.key===KEY){this.real=load();if(this.mode==='live')this.draw()}});
   setInterval(()=>{if(this.mode==='live')this.sync()},60000);
