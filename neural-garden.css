@@ -1,0 +1,98 @@
+/* Neural Garden x Neural Brain — cinematic interactive observatory */
+:root{--ng-ink:#07120e;--ng-green:#c2fa86;--ng-mint:#a9efcb;--ng-violet:#c4a6ff;--ng-stroke:#385448}
+.ng-shell{position:relative;isolation:isolate;padding:0;margin:22px 27px 18px;border:1px solid #45644e;border-radius:25px;overflow:hidden;color:#e8f6e8;background:radial-gradient(circle at 12% 5%,#264c3b 0%,transparent 36%),radial-gradient(circle at 89% 14%,#2d2550 0%,transparent 38%),#0a1514;box-shadow:0 36px 90px #02090575,inset 0 1px #b7ffaf21;font-family:inherit}
+.ng-shell:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0H160M0 80H160M0 160H160M0 0V160M80 0V160M160 0V160' fill='none' stroke='%23b4efcd' stroke-width='.4'/%3E%3C/svg%3E");background-size:110px 110px;mask-image:linear-gradient(to bottom,#000,transparent 80%)}
+.ng-glow{position:absolute;z-index:-1;width:530px;height:530px;top:-180px;left:24%;border-radius:50%;background:#bdf67b0b;filter:blur(85px);pointer-events:none}
+.ng-top{position:relative;z-index:1;display:flex;justify-content:space-between;gap:18px;align-items:start;padding:28px 31px 22px}
+.ng-eyebrow{display:flex;align-items:center;gap:10px;color:#b6ef9b;font-size:10px;letter-spacing:.2em;font-weight:900;text-transform:uppercase}
+.ng-pulse{height:8px;width:8px;background:#a8fc7d;border-radius:50%;box-shadow:0 0 12px #a8fc7db0}
+.ng-title{font-size:clamp(26px,3vw,44px);letter-spacing:-.065em;line-height:1.1;font-weight:800;margin:10px 0 10px;color:#f1ffeb}
+.ng-title span{color:var(--ng-green)}
+.ng-desc{color:#acbfbd;max-width:620px;font-size:12px;line-height:1.75;margin:0}
+.ng-controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.ng-btn{border:1px solid #527154;background:#172b22;color:#ddf6d4;border-radius:11px;min-height:39px;padding:10px 14px;font-size:11px;letter-spacing:.035em;font-weight:800;cursor:pointer;transition:transform .15s,border-color .15s,background .15s}
+.ng-btn:hover,.ng-btn:focus-visible{transform:translateY(-2px);border-color:#9de583;background:#233c2b;color:white}
+.ng-btn-primary{color:#0d2216;background:linear-gradient(110deg,#b6ed86,#d3ffae);border-color:#d6f5af;box-shadow:0 4px 20px #adf08225}
+.ng-btn-primary:hover{color:#0a1e10;background:#d8ffb4}
+.ng-badge{border:1px solid #506b60;color:#c4e6c5;border-radius:99px;padding:9px 11px;background:#15302988;font:800 10px/1.3 inherit}
+.ng-badge.demo{border-color:#7d6499;color:#eddaff;background:#3b2b4d66}
+.ng-views{position:relative;display:grid;grid-template-columns:1.07fr .93fr;gap:12px;padding:0 19px}
+.ng-scene{min-width:0;position:relative;border:1px solid #355348;border-radius:19px;overflow:hidden;min-height:425px;background:#091915}
+.ng-scene:after{content:"";pointer-events:none;position:absolute;inset:0;box-shadow:inset 0 0 80px #06110d80}
+.ng-scene.garden{background:radial-gradient(ellipse at 46% 74%,#1c493e 0%,transparent 55%),radial-gradient(ellipse at 18% 8%,#1f4a39 0%,transparent 42%),linear-gradient(150deg,#091a18,#081510 85%)}
+.ng-scene.brain{background:radial-gradient(ellipse at 49% 41%,#382c60 0%,transparent 57%),radial-gradient(circle at 80% 90%,#202a3e,transparent 50%),#111525;border-color:#514568}
+.ng-scene-meta{position:absolute;z-index:4;left:20px;top:19px;right:20px;display:flex;align-items:start;justify-content:space-between;gap:11px;pointer-events:none}
+.ng-suptitle{font:900 10px/1.6 inherit;letter-spacing:.17em;color:#c7e6c0;text-transform:uppercase}
+.ng-scene.brain .ng-suptitle{color:#ddd0ff}
+.ng-scene-meta small{display:block;color:#9daea6;font-size:10px;line-height:1.8}
+.ng-level{display:flex;align-items:center;gap:6px;background:#11291ea8;border:1px solid #55765c;color:#c6f4ae;padding:7px 9px;border-radius:8px;letter-spacing:.04em;font-size:10px;font-weight:850}
+.ng-scene.brain .ng-level{color:#e1ceff;background:#2a234799;border-color:#7866a8}
+.ng-art{position:absolute;inset:36px 0 40px;width:100%;height:calc(100% - 55px);z-index:1;display:block;overflow:visible}
+.ng-art.garden-svg{transform:translateY(0)}
+.ng-scene-spot{z-index:5;position:absolute;bottom:15px;left:17px;right:17px;min-height:49px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px;border:1px solid #476855;background:#071710bd;border-radius:11px;backdrop-filter:blur(11px)}
+.ng-scene-spot strong{font-size:12px;letter-spacing:.02em;color:#e2ffd3}
+.ng-scene-spot small{display:block;color:#97b29c;font-size:10px;line-height:1.6}
+.ng-scene.brain .ng-scene-spot{background:#15162abb;border-color:#64527c}
+.ng-scene.brain .ng-scene-spot strong{color:#ebdfff}
+.ng-scene.brain .ng-scene-spot small{color:#b5accf}
+.ng-signal{display:flex;align-items:center;gap:6px;font-size:10px;color:#d5ffb2;white-space:nowrap}
+.ng-signal:before{content:"";width:6px;height:6px;border-radius:50%;background:#b0f88c;box-shadow:0 0 10px #b0f88c}
+.ng-scene.brain .ng-signal{color:#cfb6ff}
+.ng-scene.brain .ng-signal:before{background:#b58df8;box-shadow:0 0 10px #b58df8}
+.ng-line{stroke-dasharray:5 10;animation:ng-trace 16s linear infinite;opacity:.7}
+@keyframes ng-trace{to{stroke-dashoffset:-120}}
+.ng-art .ng-orbit{transform-origin:250px 210px;animation:ng-spin 75s linear infinite}
+.ng-art .ng-orbit.alt{animation-duration:110s;animation-direction:reverse}
+@keyframes ng-spin{to{transform:rotate(360deg)}}
+.ng-particle{animation:ng-drift 4.5s ease-in-out infinite alternate;transform-origin:center}
+@keyframes ng-drift{to{transform:translateY(-12px);opacity:.95}}
+.ng-leaf{animation:ng-float 5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+@keyframes ng-float{to{transform:rotate(6deg) translateY(-4px)}}
+.ng-core{filter:drop-shadow(0 0 18px #ad97ff83)}
+.ng-node{cursor:pointer;outline:0}
+.ng-node:focus-visible circle.ng-node-face,.ng-node:hover circle.ng-node-face{stroke:#fff!important;stroke-width:2.5px;filter:drop-shadow(0 0 7px #d3b8ff)}
+.ng-node text{font-size:10px;letter-spacing:.04em;pointer-events:none}
+.ng-data-strip{padding:15px 19px 20px;display:grid;grid-template-columns:1.1fr .9fr;gap:12px}
+.ng-panel{border:1px solid #345145;border-radius:15px;background:#0d1d18b8;padding:18px 19px;min-width:0}
+.ng-panel .ng-section-label{color:#9fc48f;text-transform:uppercase;font-size:10px;letter-spacing:.16em;font-weight:900}
+.ng-panel h3{margin:7px 0 9px;font-weight:800;letter-spacing:-.04em;font-size:20px;color:#e4fce2}
+.ng-panel p{color:#9baca6;line-height:1.7;font-size:11px;margin:0}
+.ng-progress{margin-top:17px;display:flex;gap:6px;align-items:end;height:43px}
+.ng-progress span{flex:1;min-width:4px;border:1px solid #527862;border-radius:4px 4px 1px 1px;height:19%;background:linear-gradient(180deg,#95ea93,#336a51);opacity:.75;transition:height .5s,background .5s}
+.ng-progress span.ng-good{background:linear-gradient(180deg,#c7f99a,#3c8458);border-color:#94d790}
+.ng-progress span.ng-bad{background:linear-gradient(180deg,#ea9ab7,#714458);border-color:#b26a83}
+.ng-progress span.ng-empty{border-color:#345046;background:#213c31;opacity:.45}
+.ng-row{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:12px;font-size:11px;color:#a9beb0}
+.ng-row strong{color:#e0f7d9}
+.ng-pred-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.ng-pred{border:1px solid #3f6050;border-radius:10px;background:#132a20;padding:12px 10px}
+.ng-pred small{color:#a6c1b1;font-size:9px;display:block;line-height:1.5}
+.ng-pred strong{display:block;color:#d6ffa8;font-size:20px;margin-top:4px;font-weight:800}
+.ng-pred.violet{border-color:#584c79;background:#26213c}
+.ng-pred.violet strong{color:#d7bfff}
+.ng-ledger{display:flex;gap:7px;margin-top:14px;overflow:auto;padding:4px 0}
+.ng-ledger .ng-mark{min-width:30px;height:33px;display:grid;place-items:center;border-radius:7px;color:#85a692;border:1px solid #3c5347;background:#1a2d24;font-weight:900;font-size:12px}
+.ng-ledger .ng-mark.correct{border-color:#72995a;color:#d6ffae;background:#264931}
+.ng-ledger .ng-mark.wrong{border-color:#8a6675;color:#ffd0d4;background:#4c2a3a}
+.ng-ledger .ng-mark.pending{border-color:#6e5d88;color:#d2b9ff;background:#312a48}
+.ng-footer{padding:0 31px 22px;color:#809b91;font-size:10px;line-height:1.7}
+.ng-footer b{color:#bdcaba}
+.ng-trailer{min-height:100vh;padding:31px max(20px,calc((100vw - 1340px)/2));background:radial-gradient(circle at 15% 3%,#183a35,transparent 35%),radial-gradient(circle at 90% 20%,#271b42,transparent 50%),#050f0d;color:#eaf9e8;font-family:'Space Grotesk',Inter,system-ui,sans-serif}
+.ng-trailer .ng-shell{margin:0}
+.ng-trailer-brand{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:25px}
+.ng-trailer-brand strong{font-size:16px;letter-spacing:-.04em}
+.ng-trailer-brand a{color:#c3eeb8;text-decoration:none;font-size:12px;font-weight:700}
+.ng-trailer-title{margin:12px 0 23px;line-height:1.05;font-size:clamp(42px,6.3vw,83px);letter-spacing:-.08em;max-width:1000px}
+.ng-trailer-title em{color:#c0f595;font-style:normal}
+.ng-trailer-sub{max-width:740px;color:#abbbb3;font-size:14px;line-height:1.8;margin:0 0 30px}
+.ng-trailer-story{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:19px}
+.ng-trailer-story button{padding:17px;text-align:left;border-radius:13px;border:1px solid #405548;background:#10231bd4;color:#dce9dc;cursor:pointer;transition:transform .2s,border-color .2s}
+.ng-trailer-story button:hover,.ng-trailer-story button:focus-visible{transform:translateY(-3px);border-color:#b8ee94}
+.ng-trailer-story button.active{background:#233f2d;border-color:#90d98a}
+.ng-trailer-story small{display:block;color:#a1baaa;font-weight:800;letter-spacing:.12em;font-size:9px}
+.ng-trailer-story strong{display:block;margin-top:7px;font-size:14px}
+.ng-trailer-note{margin-top:16px;color:#8fa899;font-size:11px}
+@media(max-width:1100px){.ng-shell{margin:18px}.ng-top{padding:24px 21px 19px}.ng-views{padding:0 13px}.ng-scene{min-height:375px}.ng-data-strip{padding:13px}.ng-footer{padding:0 18px 18px}}
+@media(max-width:800px){.ng-views{grid-template-columns:1fr}.ng-scene{min-height:370px}.ng-data-strip{grid-template-columns:1fr}.ng-views .ng-scene.brain{min-height:360px}.ng-trailer-story{grid-template-columns:repeat(2,1fr)}.ng-top{flex-direction:column}.ng-controls{justify-content:flex-start}}
+@media(max-width:500px){.ng-shell{margin:11px 0;border-radius:16px}.ng-top{padding:19px 14px 16px}.ng-views{padding:0 7px;gap:9px}.ng-scene{min-height:325px}.ng-views .ng-scene.brain{min-height:325px}.ng-scene-meta{left:13px;right:13px;top:13px}.ng-art{inset:35px 0 30px}.ng-scene-spot{bottom:8px;left:8px;right:8px}.ng-data-strip{padding:9px;gap:9px}.ng-panel{padding:14px}.ng-pred strong{font-size:17px}.ng-trailer{padding:23px 9px}.ng-trailer-story{gap:7px}.ng-trailer-story button{padding:12px}.ng-trailer-title{padding:0 10px}.ng-trailer-sub{padding:0 10px}}
+@media(prefers-reduced-motion:reduce){.ng-particle,.ng-line,.ng-leaf,.ng-art .ng-orbit{animation:none!important}.ng-btn,.ng-progress span{transition:none!important}}
