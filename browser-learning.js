@@ -69,6 +69,8 @@ function show(m,raw){
  set('lab-next',pct(next));set('v3-ai-signal',pct(next));
  set('lab-online',m.live?.n?'Post-deployment new windows evaluated BEFORE training: '+m.live.n+' · '+pct(m.live.correct/m.live.n)+' accuracy':'Awaiting new observed intervals for prequential test-then-learn.');
  set('lab-explanation','On-device adaptive logistic regression; initial 75% of earlier observations train the model, later 25% test it without leakage. Once newer labelled windows arrive, the algorithm scores each prediction before updating its parameters. This fallback runs in your browser because the API currently challenges Vercel server requests.');
+ // Notify the Garden that this is a real model update (never a synthetic outcome).
+ window.dispatchEvent(new CustomEvent('squeek:learning-ready',{detail:{lastAt:m.lastAt,updatedAt:m.updatedAt}}));
 }
 async function learn(){
  if(Date.now()-lastLearnFetch<45000)return Boolean(model);lastLearnFetch=Date.now();
@@ -113,5 +115,17 @@ async function health(){
  set('v3-live-source','Direct Squeekchain API via this browser · '+(m?.provenance||'no device source')+'. Server-side measurement verification requires separate upstream approval. Eating and sleeping cannot be inferred.');
  return Boolean(st||b.status==='fulfilled'||c.status==='fulfilled');
 }
-window.SqueekBrowserLab={learn,health,history:null,get model(){return model}};
+// Freeze future predictions before UTC interval boundaries. A gap in the source
+// is permitted only up to two hours; do not claim a "current" forecast if older.
+function getBuckets(){return history?.activity?.days?buckets(history):[]}
+function predictForWindow(start){
+ if(!model||!Array.isArray(model.weights)||model.weights.length!==10||start<=Date.now())return null;
+ const all=getBuckets().filter(x=>x.work!==null&&x.at<start).sort((a,b)=>a.at-b.at),last=all.slice(-6);
+ if(last.length!==6||last.some((x,i)=>i&&x.at-last[i-1].at!==STEP))return null;
+ const lag=start-(last[5].at+STEP);
+ if(lag<0||lag>4*STEP)return null;
+ const p=sigmoid(dot(model.weights,features(start,last)));
+ return Number.isFinite(p)?{p,inputThrough:last[5].at,modelVersion:model.version}:null;
+}
+window.SqueekBrowserLab={learn,health,getBuckets,predictForWindow,history:null,get model(){return model}};
 })();
