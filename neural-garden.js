@@ -113,17 +113,17 @@ function brainSVG(weights,selected){
 }
 function shell(mode){
  const isDemo=mode==='demo';
- return '<div class="ng-glow"></div><div class="ng-top"><div><div class="ng-eyebrow"><span class="ng-pulse"></span> LIVING INTELLIGENCE / EXPERIMENT 01</div><h2 class="ng-title">Neural <span>Garden</span> <i style="color:#759989;font-style:normal">×</i> Feature Brain</h2><p class="ng-desc">Every verified 30-minute prediction leaves a trace. The garden mirrors recent outcomes; the brain reveals the model features behind each forecast.</p></div><div class="ng-controls">'
+ return '<div class="ng-glow"></div><div class="ng-top"><div><div class="ng-eyebrow"><span class="ng-pulse"></span> LIVING INTELLIGENCE / EXPERIMENT 01</div><h2 class="ng-title">Neural <span>Garden</span> <i style="color:#759989;font-style:normal">×</i> Feature Brain</h2><p class="ng-desc">Each verified 30-minute prediction earns exactly one leaf. Correct results are green, missed predictions amber. No verified results means no leaves. Click feature nodes to explore how the model works.</p></div><div class="ng-controls">'
   +'<span class="ng-badge '+(isDemo?'demo':'')+'" data-ng-mode-label>'+(isDemo?'CINEMATIC DEMO · SIMULATED':'REAL OBSERVATIONS · THIS DEVICE')+'</span>'
   +'<button type="button" class="ng-btn" data-ng-toggle>'+(isDemo?'Switch to live data':'Explore interactive demo')+'</button>'
   +'<button type="button" class="ng-btn ng-btn-primary" data-ng-action>'+(isDemo?'▶ Play the trailer':'↻ Sync Learning Lab')+'</button></div></div>'
-  +'<div class="ng-views"><div class="ng-scene garden"><div class="ng-scene-meta"><div><div class="ng-suptitle">01 · THE LIVING GARDEN</div><small>Each prediction shapes the ecosystem</small></div><span class="ng-level" data-ng-stage>AWAITING DATA</span></div><div data-ng-garden></div><div class="ng-scene-spot"><div><strong data-ng-garden-title>Seed stage</strong><small data-ng-garden-caption>No verified predictions yet</small></div><span class="ng-signal" data-ng-vitality>—</span></div></div>'
+  +'<div class="ng-views"><div class="ng-scene garden"><div class="ng-scene-meta"><div><div class="ng-suptitle">01 · THE LIVING GARDEN</div><small>A leaf appears only after verification</small></div><span class="ng-level" data-ng-stage>AWAITING DATA</span></div><div data-ng-garden></div><div class="ng-scene-spot"><div><strong data-ng-garden-title>Seed stage</strong><small data-ng-garden-caption>No verified predictions yet</small></div><span class="ng-signal" data-ng-vitality>—</span></div></div>'
   +'<div class="ng-scene brain"><div class="ng-scene-meta"><div><div class="ng-suptitle">02 · INSIDE THE MODEL</div><small>Click an input node to inspect its influence</small></div><span class="ng-level">10 FEATURES</span></div><div data-ng-brain></div><div class="ng-scene-spot"><div><strong data-ng-brain-insight>Feature intelligence</strong><small data-ng-brain-explain>Explore the weights shaping the 30-minute forecast.</small></div><span class="ng-signal" data-ng-brain-value>COEFFICIENTS</span></div></div></div>'
-  +'<div class="ng-data-strip"><section class="ng-panel"><div class="ng-section-label">THE GROWTH LOG · VERIFIED OUTCOMES</div><h3>Evolution, not decoration.</h3><p data-ng-summary>True/false outcomes become growth signals. A miss can reduce vitality; model updates remain independent.</p><div class="ng-progress" data-ng-progress aria-label="Recent verified forecast outcomes"></div><div class="ng-row"><span data-ng-score-label>Verified 30-minute predictions</span><strong data-ng-score>—</strong></div><div class="ng-ledger" data-ng-ledger></div></section>'
+  +'<div class="ng-data-strip"><section class="ng-panel"><div class="ng-section-label">THE GROWTH LOG · VERIFIED OUTCOMES</div><h3>Evolution, not decoration.</h3><p data-ng-summary>Every confirmed result adds one detailed leaf. Green represents a correct forecast; amber represents a miss. No data means bare branches.</p><div class="ng-progress" data-ng-progress aria-label="Recent verified forecast outcomes"></div><div class="ng-row"><span data-ng-score-label>Verified 30-minute predictions</span><strong data-ng-score>—</strong></div><div class="ng-ledger" data-ng-ledger></div></section>'
   +'<section class="ng-panel"><div class="ng-section-label">PREDICTION ORBIT · NEXT WINDOW</div><h3 data-ng-window-title>Waiting for a locked forecast</h3><p data-ng-window-copy>Predictions are frozen before their start time. Outcomes are only graded after complete public measurements arrive.</p><div class="ng-pred-grid"><div class="ng-pred"><small>MOVE PROBABILITY</small><strong data-ng-prob>—</strong></div><div class="ng-pred violet"><small>RECENT ACCURACY</small><strong data-ng-accuracy>—</strong></div><div class="ng-pred"><small>VERIFIED ROUNDS</small><strong data-ng-total>0</strong></div></div><div class="ng-row"><span>Input status</span><strong data-ng-status>Awaiting Squeekchain history</strong></div></section></div>'
-  +'<div class="ng-footer"><b>Methodology:</b> The brain visualizes ten input coefficients of a real <i>logistic regression</i> model (not an actual neural network). A correct/incorrect forecast only changes the visual garden; model parameters update from new recorded measurements. Live prediction records are stored in this browser and cannot run while nobody has the page open. '+(isDemo?'All trailer outcomes and evolution are simulated for design preview; none are official measurements.':'Missing or partial measurements are never counted as misses.')+'</div>';
+  +'<div class="ng-footer"><b>Methodology:</b> The brain visualizes ten input coefficients of a real <i>logistic regression</i> model (not an actual neural network). Each verified correct/incorrect forecast adds exactly one green/amber leaf. The model itself learns separately from recorded observations, regardless of how the tree looks. Live prediction records are stored in this browser and cannot run while nobody has the page open. '+(isDemo?'All trailer outcomes and evolution are simulated for design preview; none are official measurements.':'Missing or partial measurements are never counted as misses.')+'</div>';
 }
-function seededDemo(){return {version:1,rounds:[true,true,false,true,true,true,false,true,true].map((ok,i)=>({start:Date.now()-(9-i)*HALF,madeAt:Date.now()-(10-i)*HALF,p:.48+(i%4)*.13,choice:ok?'run':'still',status:ok?'correct':'wrong',observed:ok?'run':'still'}))}}
+function seededDemo(){return {version:1,rounds:[]}}
 class NG {
  constructor(root){this.root=root;this.mode=root.dataset.ngMode==='demo'?'demo':'live';this.real=load();this.demo=seededDemo();this.selected=5;this.playing=null;this.ledgIdx=-1;root.innerHTML=shell(this.mode);this.bind();this.draw();this.sync();}
  q(s){return this.root.querySelector(s)}
@@ -135,24 +135,13 @@ class NG {
    const tick=ev.target.closest('[data-ng-result]');if(tick){this.ledgIdx=Number(tick.dataset.ngResult);this.drawLedger();return}
   });
   this.root.addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target.closest('[data-ng-feature]')){ev.preventDefault();this.selected=Number(ev.target.closest('[data-ng-feature]').dataset.ngFeature);this.drawBrain()}});
-  // Gentle pointer parallax only; the model does not change when visitors move the scene.
-  const garden=this.q('.ng-scene.garden'),reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-  if(garden&&!reduced){
-   garden.addEventListener('pointermove',ev=>{
-    if(ev.pointerType==='touch')return;
-    const rect=garden.getBoundingClientRect(),x=(ev.clientX-rect.left)/rect.width-.5,y=(ev.clientY-rect.top)/rect.height-.5;
-    const art=garden.querySelector('.ng-art.garden-svg');
-    if(art)art.style.transform='translate3d('+(-x*9).toFixed(1)+'px,'+(-y*6).toFixed(1)+'px,0)';
-   });
-   garden.addEventListener('pointerleave',()=>{const art=garden.querySelector('.ng-art.garden-svg');if(art)art.style.transform='' });
-  }
   window.addEventListener('squeek:learning-ready',()=>{if(this.mode==='live')this.sync()});
   window.addEventListener('storage',e=>{if(e.key===KEY){this.real=load();if(this.mode==='live')this.draw()}});
   setInterval(()=>{if(this.mode==='live')this.sync()},60000);
  }
  stop(){if(this.playing){clearInterval(this.playing);this.playing=null}}
  trailer(){
-  this.stop();this.demo=seededDemo();this.demo.rounds=this.demo.rounds.slice(0,3);this.draw();this.q('[data-ng-action]').textContent='Ⅱ Pause trailer';
+  this.stop();this.demo=seededDemo();this.draw();this.q('[data-ng-action]').textContent='Ⅱ Pause trailer';
   const outcomes=[true,true,false,true,true,true,false,true,true];
   let i=0;this.playing=setInterval(()=>{
    const ok=outcomes[i%outcomes.length],n=this.demo.rounds.length;
@@ -164,16 +153,16 @@ class NG {
  stats(){return realStats((this.mode==='demo'?this.demo:this.real).rounds)}
  model(){return window.SqueekBrowserLab?.model||null}
  draw(){
-  const s=this.stats();this.q('[data-ng-garden]').innerHTML=gardenSVG(s);
-  this.q('[data-ng-stage]').textContent=this.mode==='demo'?'DEMO · STAGE '+Math.max(2,s.grade):s.grade?'STAGE '+s.grade+' / 7':'UNSCORED · SEED';
-  this.q('[data-ng-garden-title]').textContent=this.mode==='demo'?'A growing intelligence garden':s.done.length?'A garden shaped by verified outcomes':'The first seed is planted';
-  this.q('[data-ng-garden-caption]').textContent=s.done.length?'Last '+Math.min(s.done.length,30)+' verified rounds · '+s.correct+' correct · '+s.wrong+' missed':'Awaiting first pre-committed verified prediction';
-  this.q('[data-ng-vitality]').textContent=s.vitality===null?'NOT YET SCORED':Math.round(s.vitality)+'% VITALITY';
+  const s=this.stats();this.q('[data-ng-garden]').innerHTML=gardenSVG(s.done);
+  this.q('[data-ng-stage]').textContent=(this.mode==='demo'?'DEMO · ':'')+s.done.length+' LEAF'+(s.done.length===1?'':'S');
+  this.q('[data-ng-garden-title]').textContent=s.done.length?'One leaf for every verified outcome':'Bare branches · no settled forecasts';
+  this.q('[data-ng-garden-caption]').textContent=s.done.length?s.correct+' green (correct) · '+s.wrong+' amber (incorrect)':'No result, no leaves. The tree waits for verified data.';
+  this.q('[data-ng-vitality]').textContent=s.acc===null?'UNSCORED':Math.round(s.acc*100)+'% RECENT ACCURACY';
   this.q('[data-ng-score]').textContent=s.done.length?s.correct+' correct / '+s.done.length:'No verified rounds';
   this.q('[data-ng-score-label]').textContent=this.mode==='demo'?'SIMULATED DESIGN DEMO':'VERIFIED HALF-HOUR ROUNDS · DEVICE-LOCAL';
   this.q('[data-ng-accuracy]').textContent=s.acc===null?'—':Math.round(s.acc*100)+'%';
   this.q('[data-ng-total]').textContent=String(s.done.length);
-  this.q('[data-ng-summary]').textContent=s.done.length?'Every settled 30-minute result adjusts the garden. '+(s.streak?'Current correct streak: '+s.streak+'. ':'')+'A single missed prediction is a normal learning signal, not proof the model is bad.':'New forecasts will be recorded before each future 30-minute window when this browser is open. Only complete public data can settle a result.';
+  this.q('[data-ng-summary]').textContent=s.done.length?'Exactly one leaf is added for every scored half-hour forecast. A correct prediction gets a natural green leaf; a miss gets an autumn-colored leaf. Incorrect predictions never remove leaves.':'No verified data yet: the tree stays completely leafless. A forecast adds a leaf only after the official result has been confirmed.';
   this.drawLedger();this.drawBrain();this.drawPrediction();
  }
  drawBrain(){
