@@ -5,6 +5,7 @@ squeekchain-project: f3ef600b-84e5-4a1a-94a1-b651488d0577
 **Live app:** https://squeeksense.xyz  
 **Learning Lab:** https://squeeksense.xyz/#learning-lab  
 **Live Signal Center:** https://squeeksense.xyz/#signal-center
+**Neural Garden design trailer (interactive demo):** https://squeeksense.xyz/neural-garden-preview.html
 
 An independent, open-source Squeekchain Sepolia project that explores measured wheel activity with a transparent, adaptive prediction model, live device telemetry and historical visualizations.
 
@@ -17,6 +18,19 @@ When **new** labelled windows arrive, the model first records whether its old pr
 - Server-side implementation: `api/learning.js` with private model snapshots in Vercel Blob.
 - Browser fallback: `browser-learning.js`, with persistent **per-browser** model state in localStorage.
 - **Important current constraint:** Requests from Vercel egress currently face a Cloudflare challenge from `api.squeekchain.com`. On-device learning can use Squeekchain's documented browser CORS access, but is **not** a globally shared model while server access is blocked.
+
+## Neural Garden × Feature Brain — interactive visual edition
+
+The Learning Lab now includes two responsive animated SVG scenes:
+
+- **Neural Garden:** Branching illuminated botanical artwork represents a recent verified half-hour prediction success/miss record. It regresses on misses and grows on hits; stages use a recent-window vitality metric, **not proof of improving AI**.
+- **Feature Brain:** Ten interactive, keyboard-accessible nodes visualize the real *logistic regression input feature weights* (hour/day rhythms, recent movement and work intensity). It is a feature visualization, not a claim that we have trained a deep neural network.
+- **Forecast Ledger:** Browser-local predictions are timestamped and frozen **before** the next UTC half-hour starts; only complete public Squeekchain measurement buckets can grade them. Pending, missing and expired-unverified intervals never count as wrong answers. Click result markers to see their stored outcomes.
+- **Interactive design trailer:** `/neural-garden-preview.html` lets visitors play a simulated evolution sequence, inspect model nodes and switch back to the live Learning Lab. The trailer clearly labels its outcomes **simulated**.
+
+Files: `neural-garden.js`, `neural-garden.css`, `neural-garden-preview.html`. Real prediction data comes from the unchanged browser-direct API client and `browser-learning.js`'s time-safe `predictForWindow` helper.
+
+**Critical operational limitation:** Forecast logging and garden progression currently require at least one visitor browser running the page; this is **not** an always-on central service, and different devices have different local prediction histories. Continuous server-based tracking would require an approved Squeekchain server-to-server API path and persistent scheduler. No false background or global success metrics are claimed. The main Live Monitor API connection and Squeekchain verification meta tag are preserved.
 
 ## 2 — Current live modules
 
