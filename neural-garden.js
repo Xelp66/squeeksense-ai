@@ -58,7 +58,8 @@ function makeTree(rounds){
   const good=r.status==='correct';
   const shade=good?'url(#leaf-green)':'url(#leaf-amber)';
   const vein=good?'#e6ebbd':'#fae2c2';
-  leaves.push('<g data-ng-leaf="'+i+'" transform="translate('+svg(x)+' '+svg(y)+') rotate('+svg(angle)+') scale('+svg(scale)+')" aria-label="'+(good?'Correct prediction green leaf':'Incorrect prediction amber leaf')+'">'
+  leaves.push('<g data-ng-leaf="'+i+'" role="button" tabindex="0" transform="translate('+svg(x)+' '+svg(y)+') rotate('+svg(angle)+') scale('+svg(scale)+')" aria-label="'+(good?'Correct prediction green leaf':'Incorrect prediction amber leaf')+'">'
+   +'<title>Prediction '+(i+1)+': '+(good?'correct':'incorrect')+'</title><rect x="-25" y="-66" width="50" height="79" fill="transparent" pointer-events="all"/>'
    +'<path d="M0 1 C-9 -10 -17 -27 -12 -40 Q-5 -53 0 -58 Q6 -53 13 -40 C17 -27 9 -10 0 1Z" fill="'+shade+'" stroke="'+(good?'#477951':'#a36651')+'" stroke-width="1.5"/>'
    +'<path d="M0 0 Q-1 -30 0 -54 M-1 -14L-10 -29 M0 -30L12 -42 M0 -40L-8 -48 M0 -23L11 -33" stroke="'+vein+'" stroke-width="1.4" stroke-linecap="round" fill="none" opacity=".87"/>'
    +'<path d="M0 0 L1 9" stroke="#80694a" stroke-width="2" stroke-linecap="round"/></g>');
@@ -132,9 +133,15 @@ class NG {
   this.q('[data-ng-action]').addEventListener('click',async()=>{if(this.mode==='demo'){this.trailer();return}this.q('[data-ng-action]').disabled=true;this.q('[data-ng-action]').textContent='Syncing…';try{await window.SqueekBrowserLab?.learn?.();this.sync()}finally{this.q('[data-ng-action]').disabled=false;this.q('[data-ng-action]').textContent='↻ Sync Learning Lab'}});
   this.root.addEventListener('click',ev=>{
    const node=ev.target.closest('[data-ng-feature]');if(node){this.selected=Number(node.dataset.ngFeature);this.drawBrain();return}
+   const leaf=ev.target.closest('[data-ng-leaf]');if(leaf){this.inspectLeaf(Number(leaf.dataset.ngLeaf));return}
    const tick=ev.target.closest('[data-ng-result]');if(tick){this.ledgIdx=Number(tick.dataset.ngResult);this.drawLedger();return}
   });
-  this.root.addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target.closest('[data-ng-feature]')){ev.preventDefault();this.selected=Number(ev.target.closest('[data-ng-feature]').dataset.ngFeature);this.drawBrain()}});
+  this.root.addEventListener('keydown',ev=>{
+   if(ev.key!=='Enter'&&ev.key!==' ')return;
+   const feature=ev.target.closest('[data-ng-feature]'),leaf=ev.target.closest('[data-ng-leaf]');
+   if(feature){ev.preventDefault();this.selected=Number(feature.dataset.ngFeature);this.drawBrain()}
+   else if(leaf){ev.preventDefault();this.inspectLeaf(Number(leaf.dataset.ngLeaf))}
+  });
   window.addEventListener('squeek:learning-ready',()=>{if(this.mode==='live')this.sync()});
   window.addEventListener('storage',e=>{if(e.key===KEY){this.real=load();if(this.mode==='live')this.draw()}});
   setInterval(()=>{if(this.mode==='live')this.sync()},60000);
@@ -172,6 +179,13 @@ class NG {
   this.q('[data-ng-brain-insight]').textContent='F'+(this.selected+1)+' · '+FEATURE_NAMES[this.selected];
   this.q('[data-ng-brain-explain]').textContent=EXPLAINS[this.selected]+(this.mode==='demo'?' · Illustrative demo weight.':m?' · Actual signed model coefficient.':' · Awaiting real model weights.');
   this.q('[data-ng-brain-value]').textContent=this.mode==='demo'?'DEMO WEIGHT':m?(coeff>=0?'+':'')+coeff.toFixed(3):'NO MODEL';
+ }
+ inspectLeaf(i){
+  const rounds=(this.mode==='demo'?this.demo:this.real).rounds.filter(r=>r.status==='correct'||r.status==='wrong');
+  const r=rounds[i];if(!r)return;
+  const time=new Date(r.start).toLocaleString();
+  const probability=Number.isFinite(r.p)?Math.round(r.p*100)+'% RUN probability':'probability unavailable';
+  this.q('[data-ng-summary]').textContent='Leaf '+(i+1)+' · '+time+' · '+probability+' · '+(r.status==='correct'?'CORRECT green leaf':'INCORRECT amber leaf')+' · Actual wheel result: '+String(r.observed||'verified outcome').toUpperCase()+'.';
  }
  drawLedger(){
   const data=(this.mode==='demo'?this.demo:this.real).rounds.slice(-12),box=this.q('[data-ng-ledger]'),progress=this.q('[data-ng-progress]');
