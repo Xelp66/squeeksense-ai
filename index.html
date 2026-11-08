@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta name="squeekchain-project" content="f3ef600b-84e5-4a1a-94a1-b651488d0577">
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1110"><meta name="description" content="SqueekSense — a community-powered hamster activity intelligence dashboard for Squeekchain on Sepolia."><title>SqueekSense — The hamster, decoded.</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#edf5e9"><meta name="description" content="SqueekSense — a community-powered hamster activity intelligence dashboard for Squeekchain on Sepolia."><title>SqueekSense — The hamster, decoded.</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='25' fill='%230e1814'/%3E%3Ctext x='50' y='75' font-size='68' text-anchor='middle'%3E%F0%9F%90%B9%3C/text%3E%3C/svg%3E">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
@@ -12,6 +12,7 @@
 
 <link rel="stylesheet" href="/lab.css">
 <link rel="stylesheet" href="/neural-garden.css">
+<link rel="stylesheet" href="/fresh-theme.css">
 </head>
 <body>
 <header class="top">
@@ -44,10 +45,26 @@
  </nav>
 </header>
 <main id="top" class="shell">
-<section class="hero"><div><div class="eyebrow">The world's cutest on-chain intelligence</div><h1>The hamster,<br><em>decoded.</em></h1><p class="hero-copy">Meet SqueekSense. A real-time intelligence layer for Squeektoshi's wheel — tracking live activity, learning daily patterns, and forecasting the next run. Powered by real Squeekchain telemetry.</p><div class="hero-actions"><a class="btn btn-primary" href="#learning-lab">EXPLORE THE LEARNING LAB ↗</a><a class="btn" href="#forecast">See prediction model ↓</a></div><p class="disclaimer">Adaptive activity intelligence · Transparent model evaluation · Public Squeekchain data</p></div><div class="hero-art" aria-label="Illustration of a hamster in a running wheel"><div class="orbit"></div><div class="wheel" id="wheel"><div class="wheel-base"></div></div><div class="hamster" id="hamster" role="img" aria-label="Hamster">🐹</div><div class="float-card float-left"><small>WHEEL TELEMETRY</small><strong id="floating-rpm">— RPM</strong></div><div class="float-card float-right"><small>CURRENT STATE</small><strong class="signal" id="floating-state">CONNECTING...</strong></div></div></section>
+<section class="hero"><div><div class="eyebrow">The world's cutest on-chain intelligence</div><h1>The hamster,<br><em>decoded.</em></h1><p class="hero-copy">SqueekSense helps people making hamster-activity predictions explore real Squeekchain measurements. Our model studies historical wheel behavior, estimates movement probabilities and learns from newly verified observations — with every prediction open to scrutiny.</p><div class="hero-actions"><a class="btn btn-primary" href="#learning-lab">EXPLORE THE LEARNING LAB ↗</a><a class="btn" href="#forecast">See prediction model ↓</a></div><p class="disclaimer">Adaptive activity intelligence · Transparent model evaluation · Public Squeekchain data</p></div><div class="hero-art" aria-label="Illustration of a hamster in a running wheel"><div class="orbit"></div><div class="wheel" id="wheel"><div class="wheel-base"></div></div><div class="hamster" id="hamster" role="img" aria-label="Hamster">🐹</div><div class="float-card float-left"><small>WHEEL TELEMETRY</small><strong id="floating-rpm">— RPM</strong></div><div class="float-card float-right"><small>CURRENT STATE</small><strong class="signal" id="floating-state">CONNECTING...</strong></div></div></section>
+
+<section class="purpose" id="our-mission" aria-labelledby="purpose-heading">
+ <div class="purpose-lead">
+  <div><span class="purpose-kicker">WHY SQUEEKSENSE EXISTS</span>
+   <h2 id="purpose-heading">A prediction companion<br><em>built on observable behavior.</em></h2>
+   <p>We built SqueekSense for curious community members who want to make better-informed predictions about when Squeektoshi might use the wheel. Instead of making blind guesses, you can inspect the evidence, explore the model's probabilities, and see whether its earlier predictions were correct.</p>
+  </div>
+  <div class="purpose-callout"><span class="purpose-callout-icon" aria-hidden="true">◎</span><strong>The goal: evidence over guesswork.</strong><p>Our model is a statistical learning assistant—not a guarantee, a crystal ball, or a prediction game. Wheel stillness cannot prove sleep or feeding.</p><a href="#learning-lab">Explore the model & its prediction history ↗</a></div>
+ </div>
+ <div class="purpose-steps">
+  <article><span class="purpose-step-number">01 / OBSERVE</span><h3>From wheel to evidence</h3><p>Read actual Squeekchain activity, measure movement and identify historical rhythms.</p></article>
+  <article><span class="purpose-step-number">02 / PREDICT</span><h3>Probability, not certainty</h3><p>Estimate the next 30-minute activity window with clearly labeled probabilities and model inputs.</p></article>
+  <article><span class="purpose-step-number">03 / LEARN & VERIFY</span><h3>One result, one leaf</h3><p>After each complete, previously predicted interval, record the real result. Correct predictions add green leaves; missed ones add amber leaves.</p></article>
+ </div>
+ <p class="purpose-footnote">Transparent by design: estimates are shown with their limitations. Live predictions currently run and are recorded in your browser while the page is open; they are not a guaranteed continuously running global service.</p>
+</section>
 
 <section class="v3-shell" id="learning-lab">
- <div class="v3-head"><div><div class="v3-tag">🧠 01 / SQUEEKSENSE LEARNING LAB • EVOLUTION EDITION</div><h2 class="v3-title">Watch intelligence <span>take root.</span></h2><p class="v3-sub">Every complete wheel observation teaches our browser-trained model. Now each new, pre-committed half-hour forecast can shape an interactive garden—while the Feature Brain explains what the model actually uses.</p></div><div class="ng-launch"><span class="v3-chip" id="lab-status">CONNECTING TO THE LEARNING ENGINE</span><a class="ng-launch-preview" href="/neural-garden-preview.html" target="_blank" rel="noopener noreferrer">▶ WATCH INTERACTIVE TRAILER ↗</a></div></div>
+ <div class="v3-head"><div><div class="v3-tag">🧠 01 / SQUEEKSENSE LEARNING LAB • EVOLUTION EDITION</div><h2 class="v3-title">Watch intelligence <span>take root.</span></h2><p class="v3-sub">For users making Squeektoshi activity predictions: explore an adaptive model, inspect its forecast inputs and follow its verified track record. The tree begins with bare branches—one detailed leaf appears for each confirmed 30-minute prediction outcome.</p></div><div class="ng-launch"><span class="v3-chip" id="lab-status">CONNECTING TO THE LEARNING ENGINE</span><a class="ng-launch-preview" href="/neural-garden-preview.html" target="_blank" rel="noopener noreferrer">▶ WATCH INTERACTIVE TRAILER ↗</a></div></div>
  <div class="ng-shell" data-neural-garden data-ng-mode="live" aria-label="Interactive Neural Garden and Feature Brain visualizations"></div>
  <details class="ng-advanced"><summary><span>◈ Model diagnostics & evaluation details</span><small>TRAINING SAMPLES · ACCURACY · BASELINE · BRIER SCORE</small></summary>
  <div class="v3-grid"><div class="v3-card v3-metric"><small>TRAINING EXAMPLES</small><strong id="lab-training">—</strong><span>Measured windows used in model updates</span></div><div class="v3-card v3-metric"><small>OUT-OF-SAMPLE ACCURACY</small><strong id="lab-val-accuracy">—</strong><span id="lab-samples">Waiting for validation data</span></div><div class="v3-card v3-metric"><small>NEW EXAMPLES LEARNED</small><strong id="lab-new">—</strong><span>Incrementally incorporated after evaluation</span></div><div class="v3-card v3-metric"><small>NEXT 30-MIN FORECAST</small><strong id="lab-next">—</strong><span>Observed wheel movement probability</span></div></div>
