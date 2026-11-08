@@ -21,12 +21,12 @@ When **new** labelled windows arrive, the model first records whether its old pr
 
 ## Neural Garden × Feature Brain — interactive visual edition
 
-The Learning Lab now includes two responsive animated SVG scenes:
+The Learning Lab now includes two responsive, interactive but **stationary** SVG scenes (no endlessly moving decorative animation):
 
-- **Neural Garden:** Branching illuminated botanical artwork represents a recent verified half-hour prediction success/miss record. It regresses on misses and grows on hits; stages use a recent-window vitality metric, **not proof of improving AI**.
+- **Neural Garden:** Detailed botanical branches initially contain **zero leaves**. Exactly one realistically veined leaf appears per verified prediction result: **green = correct**, **amber = incorrect**. Wrong predictions do not remove leaves. Missing or pending results do not add leaves. The tree counts recorded outcomes rather than claiming model accuracy improved.
 - **Feature Brain:** Ten interactive, keyboard-accessible nodes visualize the real *logistic regression input feature weights* (hour/day rhythms, recent movement and work intensity). It is a feature visualization, not a claim that we have trained a deep neural network.
 - **Forecast Ledger:** Browser-local predictions are timestamped and frozen **before** the next UTC half-hour starts; only complete public Squeekchain measurement buckets can grade them. Pending, missing and expired-unverified intervals never count as wrong answers. Click result markers to see their stored outcomes.
-- **Interactive design trailer:** `/neural-garden-preview.html` lets visitors play a simulated evolution sequence, inspect model nodes and switch back to the live Learning Lab. The trailer clearly labels its outcomes **simulated**.
+- **Interactive design trailer:** `/neural-garden-preview.html` opens with a leafless tree. Visitors may play a short, finite, deliberately initiated simulated sequence, inspect model nodes and switch to the live Learning Lab. The trailer clearly labels its outcomes **simulated**.
 
 Files: `neural-garden.js`, `neural-garden.css`, `neural-garden-preview.html`. Real prediction data comes from the unchanged browser-direct API client and `browser-learning.js`'s time-safe `predictForWindow` helper.
 
@@ -73,6 +73,10 @@ When `/v1/status` cannot be fetched, the live monitor now displays **NO FEED**, 
 If the real upstream status JSON opens in another browser tab, users may optionally inspect a copied response on-device. This is a **user-pasted, unverified historical snapshot**; it does not alter live telemetry, score Arena rounds, or teach the model. The diagnostics report can be copied without authentication tokens. The source integration still uses only documented public GET endpoints, and does not circumvent Cloudflare.
 
 **Access-blocking evidence:** from Vercel's Frankfurt region, `GET https://api.squeekchain.com/v1/status` returned `HTTP 403`, `cf-mitigated: challenge`, and an HTML challenge instead of the documented JSON. The project's own `/api/health` correctly reports `upstream.state: server-challenged`. Since browsers can see cross-origin fetch errors when the challenge omits CORS headers, a successful direct URL navigation alone does not prove JavaScript can access the API. The Squeekchain operator must allow the documented public GET traffic for any future server-verified game and shared learning to work reliably.
+
+## Botanical light redesign
+
+The public site uses a warmer, brighter ivory/green/lavender visual hierarchy (`fresh-theme.css`), with prominent predictor education and clear emphasis on the live Learning Lab, forecasts, actual history and verified outcomes. It explains that SqueekSense is a statistical prediction companion for community members rather than a guaranteed oracle or active wagering game. The original Squeekchain browser API requests remain unchanged.
 
 ## Simplified navigation
 
