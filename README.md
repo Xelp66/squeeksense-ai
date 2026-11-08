@@ -1,13 +1,12 @@
-# SqueekSense AI 🐹 — Learning Lab + Prediction Arena
+# SqueekSense AI 🐹 — Learning Lab & Wheel Intelligence
 
 squeekchain-project: f3ef600b-84e5-4a1a-94a1-b651488d0577
 
 **Live app:** https://squeeksense.xyz  
 **Learning Lab:** https://squeeksense.xyz/#learning-lab  
-**Player Arena:** https://squeeksense.xyz/#arena  
-**Instant Replay:** https://squeeksense.xyz/#practice-replay
+**Live Signal Center:** https://squeeksense.xyz/#signal-center
 
-An independent, open-source Squeekchain Sepolia project that uses real wheel measurements to build a testable prediction game and an adaptive, scientifically transparent learning engine.
+An independent, open-source Squeekchain Sepolia project that explores measured wheel activity with a transparent, adaptive prediction model, live device telemetry and historical visualizations.
 
 ## 1 — Learning Lab
 
@@ -19,36 +18,16 @@ When **new** labelled windows arrive, the model first records whether its old pr
 - Browser fallback: `browser-learning.js`, with persistent **per-browser** model state in localStorage.
 - **Important current constraint:** Requests from Vercel egress currently face a Cloudflare challenge from `api.squeekchain.com`. On-device learning can use Squeekchain's documented browser CORS access, but is **not** a globally shared model while server access is blocked.
 
-## 2 — Named-player Prediction Arena
+## 2 — Current live modules
 
-Users create a unique public handle plus password. The password is salted and hashed with Node's scrypt; private account data and server-locked rounds are stored in a private Vercel Blob store. Sessions are HMAC-signed and expire after 30 days. There is no email, wallet connection or password recovery yet.
+- **Learning Lab:** A chronological, incrementally updated activity prediction model, with holdout validation and a baseline comparison.
+- **Live Signal Center:** Running versus wheel-still telemetry, source provenance, freshness, and optional locally saved personal annotations.
+- **Live Monitor, AI Forecast, Activity Map and Block Radar:** Sensor readings, transparent historical estimates and Squeekchain state.
+- **Connection diagnostics:** Clear distinction between browser API access, Vercel server egress, missing data and stale measurements.
 
-Players can enter **any whole number of minutes from 1 through 1440**, not fixed 30/60/120 presets. The question rotates between:
+The previous **You vs the Wheel / Prediction Arena** and **Can You Beat the Past? / Historical Replay** games have been **removed from the public interface** as we design a new game. Their client-side event handlers no longer run and Replay's script is not loaded. Older server-side game code and stored player records remain archived for possible future migration; no user records have been deliberately deleted.
 
-1. Whether wheel movement will be observed (yes/no).
-2. Number of device **passage segments** beginning in the chosen window.
-3. Duration of the first completed measured passage segment (seconds); not necessarily a full biological running session.
-4. Number of fully observed active 30-minute intervals (for games with at least one full interval).
-
-The server locks the answer before the next time boundary and *attempts* to verify the result from public Squeekchain history. Exact counts use signed device segment evidence where sufficient, or complete historical half-hour buckets for aggregate questions. Results are marked **unverified** rather than fabricated when readings or sufficient coverage are missing.
-
-- Backend: `api/arena.js`, `api/_lib.js`.
-- Identity and match data: Vercel **private** Blob storage.
-- Leaderboard: derived from immutable server-recorded verified outcomes (up to the latest 500 results), not user-entered scores.
-- **Known limitation:** Vercel's outbound requests to the official Squeekchain API currently encounter upstream bot protection. Live round locking and player accounts can be available while score settlement remains pending until Squeekchain allows our server to read the official API; never call these pending games verified. The app explicitly displays this status.
-
-## 3 — Historical Replay (play immediately)
-
-An instant, fully observable game using the browser's direct API access. Visitors need **no account**. They choose 1–24 complete 30-minute windows (30–720 minutes), then receive a rotating question:
-
-- Any movement in the window?
-- How many active 30-minute buckets?
-- Which half-hour had the first activity?
-- Was measured work higher than the previous equal-length interval?
-
-Only complete historical observations can become a puzzle. The user sees previous data, not the hidden outcome. The baseline is computed from **past data only** to avoid look-ahead. After guessing, the correct recorded answer appears and local practice points update. **Replay points do not count toward the server leaderboard.** Files: `replay.js` and `lab.css`.
-
-## 4 — Honest signal visualization and API health
+## 3 — Honest signal visualization and API health
 
 A separate Signal Center displays device **RUNNING**, **IDLE / wheel still**, or **STALE / no data**, plus last observation time, provenance, historical-statistics availability and device passage feed status. It uses independent `/status`, `/measurement/stats?range=7d` and `/measurement/runs?limit=25` checks, never an unsupported query parameter.
 
@@ -67,7 +46,7 @@ Reference: https://docs.squeekchain.com/developers/api/
 
 ## Live API connectivity (updated November 6, 2026)
 
-Squeekchain's official API documents **public browser CORS reads** for `https://api.squeekchain.com/v1/*`. The application now uses **`squeek-api.js`** as its shared, browser-direct GET client for live status, statistics, run segments, Learning Lab and Replay, with path allowlisting, request deduplication, endpoint-specific TTLs, sensible 429/503 backoff, and explicit unavailable-data errors. It avoids arbitrary query parameters and conditional CORS preflights.
+Squeekchain's official API documents **public browser CORS reads** for `https://api.squeekchain.com/v1/*`. The application now uses **`squeek-api.js`** as its shared, browser-direct GET client for live status, statistics, run segments and Learning Lab, with path allowlisting, request deduplication, endpoint-specific TTLs, sensible 429/503 backoff, and explicit unavailable-data errors. It avoids arbitrary query parameters and conditional CORS preflights.
 
 **Telemetry is not a synonym for backend availability:** the live UI uses `measurement.freshness`, `measurement.coreStatus` and API-generated time stamps to distinguish **RUNNING**, **IDLE (wheel still)**, **STALE** and **API UNREACHABLE**, rather than comparing signed device timestamps against possibly inaccurate visitor clocks. Stale data remains unknown, never biological sleep.
 
@@ -79,15 +58,15 @@ When `/v1/status` cannot be fetched, the live monitor now displays **NO FEED**, 
 
 If the real upstream status JSON opens in another browser tab, users may optionally inspect a copied response on-device. This is a **user-pasted, unverified historical snapshot**; it does not alter live telemetry, score Arena rounds, or teach the model. The diagnostics report can be copied without authentication tokens. The source integration still uses only documented public GET endpoints, and does not circumvent Cloudflare.
 
-**Access-blocking evidence:** from Vercel's Frankfurt region, `GET https://api.squeekchain.com/v1/status` returned `HTTP 403`, `cf-mitigated: challenge`, and an HTML challenge instead of the documented JSON. The project's own `/api/health` correctly reports `upstream.state: server-challenged`. Since browsers can see cross-origin fetch errors when the challenge omits CORS headers, a successful direct URL navigation alone does not prove JavaScript can access the API. The Squeekchain operator must allow the documented public GET traffic for server-side scoring and shared learning to work reliably.
+**Access-blocking evidence:** from Vercel's Frankfurt region, `GET https://api.squeekchain.com/v1/status` returned `HTTP 403`, `cf-mitigated: challenge`, and an HTML challenge instead of the documented JSON. The project's own `/api/health` correctly reports `upstream.state: server-challenged`. Since browsers can see cross-origin fetch errors when the challenge omits CORS headers, a successful direct URL navigation alone does not prove JavaScript can access the API. The Squeekchain operator must allow the documented public GET traffic for any future server-verified game and shared learning to work reliably.
 
 ## Simplified navigation
 
-A compact header now links to **Arena**, **Learning Lab**, **Replay** and **Live**; the **Explore** dropdown holds Live Monitor, AI Forecast, Activity Map and Block Radar. The separate mobile menu mirrors these destinations and removes duplicate Arena/Live links.
+The compact header links to **Learning Lab** and **Live**; the **Explore** dropdown contains Live Monitor, AI Forecast, Activity Map and Block Radar. The mobile menu mirrors these destinations without obsolete game links.
 
 ## Deployment and limitations
 
-Root `index.html` is static; `lab.js`, `browser-learning.js`, `replay.js` provide the interface. Vercel Node Functions under `api/` use `@vercel/blob` (private storage credentials and `ARENA_SESSION_SECRET` are server environment variables and **must never be committed**).
+Root `index.html` is static; `lab.js` and `browser-learning.js` power the currently displayed Learning Lab and Signal Center. The retired `replay.js` is not loaded by the app. Archived game functions under `api/` may still use private Vercel Blob storage and environment secrets; these must never be committed. The live browser telemetry API client does not need these secrets.
 
 To run the static interface locally:
 
@@ -96,9 +75,9 @@ npm install
 npx serve .
 ```
 
-Without Vercel deployment and server environment variables, account APIs will not work; the browser learning and replay features can still use the direct public API where CORS and upstream access permit. Vercel Blob storage has usage limits and may have charges above included quotas. No payment, staking, NFT transfer, wallet connection or real-money wager is implemented.
+The active Learning Lab and live telemetry use the public browser API where CORS and upstream access permit. Legacy account APIs are not linked from the current interface. Vercel Blob storage has usage limits and may have charges above included quotas. No payment, staking, NFT transfer, wallet connection or real-money wager is implemented.
 
-Privacy: a username is visible in the public leaderboard. The user's password is hashed in private storage, and 30-day session tokens are saved on the user's browser. Personal manual observations and browser-training snapshots remain local. A backup/recovery flow, consent notices and more robust abuse protection are future improvements.
+Privacy: local manual observations and browser-training snapshots remain on the user's device. Existing player-account records from the retired Arena have been preserved rather than erased; any future reintroduction of accounts requires an updated privacy and recovery review.
 
 ## Attribution
 
