@@ -154,7 +154,7 @@ class NG {
  model(){return window.SqueekBrowserLab?.model||null}
  draw(){
   const s=this.stats();this.q('[data-ng-garden]').innerHTML=gardenSVG(s.done);
-  this.q('[data-ng-stage]').textContent=(this.mode==='demo'?'DEMO · ':'')+s.done.length+' LEAF'+(s.done.length===1?'':'S');
+  this.q('[data-ng-stage]').textContent=(this.mode==='demo'?'DEMO · ':'')+s.done.length+(s.done.length===1?' LEAF':' LEAVES');
   this.q('[data-ng-garden-title]').textContent=s.done.length?'One leaf for every verified outcome':'Bare branches · no settled forecasts';
   this.q('[data-ng-garden-caption]').textContent=s.done.length?s.correct+' green (correct) · '+s.wrong+' amber (incorrect)':'No result, no leaves. The tree waits for verified data.';
   this.q('[data-ng-vitality]').textContent=s.acc===null?'UNSCORED':Math.round(s.acc*100)+'% RECENT ACCURACY';
