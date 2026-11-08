@@ -117,3 +117,11 @@
 .ng-node{pointer-events:visiblePainted}
 .ng-node:focus-visible{outline:none}
 .ng-node:focus-visible .ng-node-face{stroke:#fff;stroke-width:3px}
+
+/* Compact trailer launcher inside the real Learning Lab. */
+.ng-launch{display:flex;align-items:flex-end;flex-direction:column;gap:10px;max-width:320px}
+.ng-launch-preview{padding:10px 15px;display:inline-block;font-size:10px;font-weight:900;letter-spacing:.07em;text-decoration:none!important;color:#d7f9c3!important;border:1px solid #5c7f57;background:#1c3124;border-radius:9px;transition:background .2s,border-color .2s}
+.ng-launch-preview:hover,.ng-launch-preview:focus-visible{border-color:#b6f192;background:#29442c}
+.ng-scene .ng-art.garden-svg{transition:transform .24s ease-out}
+@media(max-width:850px){.ng-launch{align-items:flex-start;max-width:100%}}
+@media(prefers-reduced-motion:reduce){.ng-scene .ng-art.garden-svg{transition:none}}
