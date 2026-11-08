@@ -32,49 +32,53 @@ function realStats(rounds){
  const grade=vitality===null?0:Math.min(7,Math.max(1,Math.round(vitality/15)));
  return {done,correct,wrong:done.length-correct,acc,streak,vitality,grade};
 }
-function starfield(){
- const random=rng(8241),nodes=[];
- for(let i=0;i<38;i++){const x=12+random()*576,y=20+random()*290,r=.45+random()*1.3;
-  nodes.push('<circle class="ng-particle" cx="'+svg(x)+'" cy="'+svg(y)+'" r="'+svg(r)+'" fill="'+(i%4===0?'#d5b5fc':'#a4efce')+'" opacity="'+svg(.16+random()*.57)+'" style="animation-delay:-'+svg(random()*4)+'s"/>')}
- return nodes.join('');
+/* The garden is static. Every settled forecast produces exactly one leaf. */
+function makeTree(rounds){
+ const paths=[],tips=[],random=rng(5331);
+ function branch(x,y,len,ang,depth){
+  const ex=x+Math.cos(ang)*len,ey=y+Math.sin(ang)*len;
+  const px=x+Math.cos(ang+(random()-.5)*.18)*len*.55;
+  const py=y+Math.sin(ang+(random()-.5)*.18)*len*.55;
+  const w=Math.max(1,11*Math.pow(.64,depth));
+  paths.push('<path d="M'+svg(x)+' '+svg(y)+' Q'+svg(px)+' '+svg(py)+' '+svg(ex)+' '+svg(ey)+'" stroke="'+(depth<3?'url(#tree-wood)':'#92735b')+'" stroke-width="'+svg(w)+'" fill="none" stroke-linecap="round"/>');
+  if(depth<=2)paths.push('<path d="M'+svg(x+1)+' '+svg(y)+' Q'+svg(px+1)+' '+svg(py)+' '+svg(ex+1)+' '+svg(ey)+'" fill="none" stroke="#ead5b6" stroke-opacity=".22" stroke-width="'+svg(w*.2)+'"/>');
+  if(depth===6){tips.push({x:ex,y:ey});return}
+  const a=.37+random()*.16,scale=.70+random()*.08;
+  branch(ex,ey,len*scale,ang-a,depth+1);
+  branch(ex,ey,len*(scale-.03),ang+a,depth+1);
+ }
+ branch(304,386,95,-Math.PI/2,0);
+ const positions=tips.map((pt,i)=>({pt,priority:(i*37)%tips.length})).sort((a,b)=>a.priority-b.priority);
+ const leaves=[];
+ rounds.forEach((r,i)=>{
+  const pt=positions[i%positions.length]?.pt||{x:305,y:225},cycle=Math.floor(i/positions.length);
+  const rand=rng(i*173+979);
+  const x=pt.x+(rand()-.5)*(4+cycle*9),y=pt.y+(rand()-.5)*(4+cycle*9);
+  const angle=(rand()-.5)*85-4,scale=.28+rand()*.19;
+  const good=r.status==='correct';
+  const shade=good?'url(#leaf-green)':'url(#leaf-amber)';
+  const vein=good?'#e6ebbd':'#fae2c2';
+  leaves.push('<g data-ng-leaf="'+i+'" transform="translate('+svg(x)+' '+svg(y)+') rotate('+svg(angle)+') scale('+svg(scale)+')" aria-label="'+(good?'Correct prediction green leaf':'Incorrect prediction amber leaf')+'">'
+   +'<path d="M0 1 C-9 -10 -17 -27 -12 -40 Q-5 -53 0 -58 Q6 -53 13 -40 C17 -27 9 -10 0 1Z" fill="'+shade+'" stroke="'+(good?'#477951':'#a36651')+'" stroke-width="1.5"/>'
+   +'<path d="M0 0 Q-1 -30 0 -54 M-1 -14L-10 -29 M0 -30L12 -42 M0 -40L-8 -48 M0 -23L11 -33" stroke="'+vein+'" stroke-width="1.4" stroke-linecap="round" fill="none" opacity=".87"/>'
+   +'<path d="M0 0 L1 9" stroke="#80694a" stroke-width="2" stroke-linecap="round"/></g>');
+ });
+ const trunk='<path d="M302 411 Q297 363 301 318 L304 276 L311 278 Q311 365 322 414 L314 408 L308 404Z" fill="url(#tree-wood)" stroke="#795c4a" stroke-width="1"/><path d="M305 395 Q302 355 308 309 M302 371Q299 343 303 330" fill="none" stroke="#e6d0ae" stroke-width="1.3" opacity=".25"/><path d="M304 406 Q285 406 266 416 M312 406 Q327 407 349 419" fill="none" stroke="#82654d" stroke-width="5" stroke-linecap="round"/>';
+ return trunk+'<g class="ng-branches">'+paths.join('')+'</g><g class="ng-leaves">'+leaves.join('')+'</g>';
 }
-function makeTree(vitality,seedCount){
- const rand=rng(2104),out=[],leaves=[];
- const grade=vitality===null?2:clamp(Math.round(vitality/16),2,7);
- const depth=grade<3?4:grade<5?5:6;
- const draw=(x,y,len,angle,step,idx)=>{
-  const nx=x+Math.cos(angle)*len,ny=y+Math.sin(angle)*len;
-  const cx=x+Math.cos(angle-.23)*len*.42,cy=y+Math.sin(angle-.23)*len*.52;
-  const width=Math.max(.7,6.4*Math.pow(.69,step));
-  out.push('<path d="M'+svg(x)+' '+svg(y)+' Q'+svg(cx)+' '+svg(cy)+' '+svg(nx)+' '+svg(ny)+'" stroke="'+(step<2?'url(#ng-wood)':'#82bc9a')+'" stroke-width="'+svg(width)+'" stroke-linecap="round" fill="none" opacity="'+svg(.95-step*.067)+'"/>');
-  if(step>=depth){
-   const size=2.8+rand()*4.7;
-   leaves.push('<ellipse class="ng-leaf" cx="'+svg(nx)+'" cy="'+svg(ny)+'" rx="'+svg(size)+'" ry="'+svg(size*1.8)+'" transform="rotate('+svg((angle*180/Math.PI)+90)+' '+svg(nx)+' '+svg(ny)+')" fill="'+(idx%5===0?'#cdfd97':idx%3===0?'#7cc9bd':'#86dcab')+'" opacity="'+(.6+rand()*.3)+'" style="animation-delay:-'+svg(rand()*3.2)+'s"/>');
-   if(seedCount>0 && idx%Math.max(3,Math.floor(19/grade))===0){
-    leaves.push('<circle cx="'+svg(nx)+'" cy="'+svg(ny)+'" r="'+svg(2+rand()*2.1)+'" fill="'+(idx%2?'#efb6ed':'#e7ffbc')+'" opacity=".85" filter="url(#ng-bloom)"/>')}
-   return;
-  }
-  const spread=.38+.11*rand();
-  const mult=.71+rand()*.07;
-  draw(nx,ny,len*mult,angle-spread,step+1,idx*2+1);
-  draw(nx,ny,len*(mult-.03),angle+spread,step+1,idx*2+2);
-  if(step===2&&grade>=5)draw(nx,ny,len*.66,angle+.05,step+2,idx*3+9);
- };
- draw(305,396,grade<=2?71:82,-Math.PI/2,0,1);
- return '<g>'+out.join('')+'</g><g>'+leaves.join('')+'</g>';
-}
-function gardenSVG(stats){
- const score=stats.vitality;const tree=makeTree(score,stats.correct);
- return '<svg class="ng-art garden-svg" viewBox="0 0 600 450" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Interactive illustration of a luminous tree that grows or recedes with verified prediction performance">'
- +'<defs><radialGradient id="ng-sky"><stop stop-color="#8ff5ab" stop-opacity=".16"/><stop offset="1" stop-color="#8ff5ab" stop-opacity="0"/></radialGradient><linearGradient id="ng-wood" x1="0" y1="1" x2=".6" y2="0"><stop stop-color="#407c5f"/><stop offset=".5" stop-color="#76ae7b"/><stop offset="1" stop-color="#b1e0a0"/></linearGradient><linearGradient id="ng-floor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1c5036"/><stop offset="1" stop-color="#0a2018"/></linearGradient><filter id="ng-bloom"><feGaussianBlur stdDeviation="3"/></filter></defs>'
- +'<circle cx="304" cy="200" r="185" fill="url(#ng-sky)"/><circle cx="302" cy="202" r="165" fill="none" stroke="#b4d999" stroke-opacity=".14" stroke-dasharray="2 10"/>'
- +'<circle cx="305" cy="215" r="128" fill="none" stroke="#b9e9a5" stroke-opacity=".09"/>'+starfield()
- +'<g class="ng-orbit"><ellipse cx="304" cy="214" rx="220" ry="58" transform="rotate(-19 304 214)" stroke="#b0f5bb" stroke-opacity=".14" fill="none" stroke-dasharray="8 12"/></g>'
- +'<path d="M0 401Q95 359 181 384T360 379T600 402V450H0Z" fill="#123528"/><path d="M0 422Q90 379 185 419T415 413T600 424V450H0Z" fill="url(#ng-floor)"/>'
- +'<ellipse cx="305" cy="412" rx="145" ry="22" fill="#8ede90" opacity=".13" filter="url(#ng-bloom)"/>'
- +tree
- +'<path d="M40 426Q130 386 199 425M397 425Q485 388 560 425" stroke="#78a280" stroke-width="2" fill="none" opacity=".15"/>'
- +'<g opacity=".7"><circle cx="106" cy="372" r="2" fill="#b7f7ad"/><circle cx="475" cy="348" r="2" fill="#b7f7ad"/><circle cx="406" cy="289" r="3" fill="#b9f2ad"/></g></svg>';
+function gardenSVG(rounds){
+ const records=rounds.filter(r=>r.status==='correct'||r.status==='wrong');
+ return '<svg class="ng-art garden-svg" viewBox="0 0 600 450" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Natural botanical tree: one detailed green or amber leaf for each verified prediction. No predictions means bare branches.">'
+ +'<defs><linearGradient id="tree-wood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#674d3d"/><stop offset=".5" stop-color="#bb9771"/><stop offset="1" stop-color="#7c614e"/></linearGradient>'
+ +'<linearGradient id="leaf-green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#497f4d"/><stop offset=".45" stop-color="#a3ce7a"/><stop offset="1" stop-color="#5f9458"/></linearGradient>'
+ +'<linearGradient id="leaf-amber" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a75f48"/><stop offset=".5" stop-color="#e4ae77"/><stop offset="1" stop-color="#b87054"/></linearGradient>'
+ +'<radialGradient id="tree-sky" cx="37%" cy="25%" r="75%"><stop stop-color="#f9ffec"/><stop offset=".58" stop-color="#e7f3dd"/><stop offset="1" stop-color="#c9dfd1"/></radialGradient></defs>'
+ +'<rect width="600" height="450" fill="url(#tree-sky)"/>'
+ +'<path d="M0 362 Q144 324 232 347 T490 329 T600 358V450H0Z" fill="#b7d8be" opacity=".5"/>'
+ +'<path d="M0 404 Q120 373 282 400 T600 389V450H0Z" fill="#a9c6a6"/>'
+ +'<ellipse cx="305" cy="417" rx="126" ry="14" fill="#536e4e" opacity=".15"/>'
+ +makeTree(records)
+ +'<path d="M46 415q9 -15 18 0M95 422q7 -12 16 0M455 413q10 -16 22 0" stroke="#699268" stroke-opacity=".5" stroke-width="1.5" fill="none"/></svg>';
 }
 function brainSVG(weights,selected){
  const random=rng(92177),cx=268,cy=220;
