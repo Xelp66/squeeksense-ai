@@ -96,3 +96,18 @@
 @media(max-width:800px){.ng-views{grid-template-columns:1fr}.ng-scene{min-height:370px}.ng-data-strip{grid-template-columns:1fr}.ng-views .ng-scene.brain{min-height:360px}.ng-trailer-story{grid-template-columns:repeat(2,1fr)}.ng-top{flex-direction:column}.ng-controls{justify-content:flex-start}}
 @media(max-width:500px){.ng-shell{margin:11px 0;border-radius:16px}.ng-top{padding:19px 14px 16px}.ng-views{padding:0 7px;gap:9px}.ng-scene{min-height:325px}.ng-views .ng-scene.brain{min-height:325px}.ng-scene-meta{left:13px;right:13px;top:13px}.ng-art{inset:35px 0 30px}.ng-scene-spot{bottom:8px;left:8px;right:8px}.ng-data-strip{padding:9px;gap:9px}.ng-panel{padding:14px}.ng-pred strong{font-size:17px}.ng-trailer{padding:23px 9px}.ng-trailer-story{gap:7px}.ng-trailer-story button{padding:12px}.ng-trailer-title{padding:0 10px}.ng-trailer-sub{padding:0 10px}}
 @media(prefers-reduced-motion:reduce){.ng-particle,.ng-line,.ng-leaf,.ng-art .ng-orbit{animation:none!important}.ng-btn,.ng-progress span{transition:none!important}}
+
+/* Advanced metrics stay functional without competing with the immersive lab. */
+.ng-advanced{margin:8px 27px 24px;border:1px solid #39594b;border-radius:14px;background:#101e17;overflow:hidden}
+.ng-advanced>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;font-size:12px;font-weight:800;color:#c4e5ba;letter-spacing:.02em}
+.ng-advanced>summary::-webkit-details-marker{display:none}
+.ng-advanced>summary:hover{background:#172a1e}
+.ng-advanced>summary small{font-size:9px;letter-spacing:.14em;color:#91a995;text-align:right}
+.ng-advanced[open]>summary{border-bottom:1px solid #385445}
+.ng-advanced .v3-grid{padding-top:16px}
+.ng-advanced .v3-detail-grid{padding-bottom:12px}
+.ng-advanced .v3-disclaimer{padding-bottom:18px}
+#learning-lab.v3-shell{background:radial-gradient(circle at 68% -15%,#2d4e3c55,transparent 47%),#0b1812;border-color:#476c51}
+#learning-lab>.v3-head{padding-bottom:5px}
+#learning-lab>.v3-head .v3-title{font-size:clamp(29px,3.1vw,45px);line-height:1.12}
+@media(max-width:600px){.ng-advanced{margin:9px 12px 20px}.ng-advanced>summary{padding:15px;font-size:11px}.ng-advanced>summary small{display:none}}
